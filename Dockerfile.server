@@ -4,7 +4,8 @@ ADD . /app
 WORKDIR /app
 RUN apt-get update                                  \
   && apt-get install -y --no-install-recommends     \
-                     autoconf gcc git groff make    \
+                     autoconf automake gcc git      \
+                     groff libc6-dev make           \
   && rm -rf /var/lib/apt/lists/*
 RUN ./bootstrap && ./configure                      \
   && make && make install                           \
