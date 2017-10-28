@@ -1,14 +1,10 @@
-FROM debian:buster
+FROM alpine:3.6
 
 ADD . /app
 WORKDIR /app
-RUN apt-get update                                  \
-  && apt-get install -y --no-install-recommends     \
-                     autoconf automake gcc git      \
-                     groff libc6-dev make           \
-  && rm -rf /var/lib/apt/lists/*
-RUN ./bootstrap && ./configure                      \
-  && make && make install                           \
-  && rm -rf /app/{autom4te.cache,config*,include,info*,lib,src,tests}
+RUN apk add --no-cache autoconf automake gcc make musl-dev git groff      \
+  && ./bootstrap && ./configure && make && make install                   \
+  && apk del autoconf automake gcc make musl-dev git groff
+
 # Consider starting the server with /app/scripts/keepitup
-RUN files -f && fairland 5 60 && emp_server
+#RUN files -f && fairland 5 60 && emp_server
