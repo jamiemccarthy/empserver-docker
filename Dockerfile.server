@@ -1,0 +1,13 @@
+FROM debian:buster
+
+ADD . /app
+WORKDIR /app
+RUN apt-get update                                  \
+  && apt-get install -y --no-install-recommends     \
+                     autoconf gcc git groff make    \
+  && rm -rf /var/lib/apt/lists/*
+RUN ./bootstrap && ./configure                      \
+  && make && make install                           \
+  && rm -rf /app/{autom4te.cache,config*,include,info*,lib,src,tests}
+# Consider starting the server with /app/scripts/keepitup
+RUN files -f && fairland 5 60 && emp_server
