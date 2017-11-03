@@ -55,8 +55,11 @@
 /configure
 /stamp-h.in
 /sources.mk
+# Docker
+/docker/built-usr-local
 
 # Generic junk
 *.orig
 *.rej
 *~
+*.swp
