@@ -1,0 +1,5 @@
+FROM jamiemccarthy/empire4-server:latest
+
+ADD docker/setup-app /app
+WORKDIR /app
+CMD ./setup
