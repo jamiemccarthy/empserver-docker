@@ -23,6 +23,9 @@ docker build -f docker/Dockerfile.setup .
 docker volume rm -f my_empire_volume
 docker run -it --rm --mount type=volume,source=my_empire_volume,target=/usr/local/var/empire jamiemccarthy/empire4-setup:latest
 
+# To check out the contents of a volume
+docker run -it --rm --mount type=volume,source=my_empire_volume,target=/usr/local/var/empire alpine:3.6 sh
+
 # This uses the volume you just set up to start a game.
 # Use any unique game name for the container, in place of "game1"
 # (TODO: instructions to set the port?)
