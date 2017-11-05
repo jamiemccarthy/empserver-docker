@@ -1,5 +1,8 @@
 FROM jamiemccarthy/empire4-server:latest
 
-ADD docker/setup-app /app
+RUN apk update && apk add --no-cache ruby
+ADD docker /app
 WORKDIR /app
-CMD ./setup
+VOLUME ["/usr/local/etc/empire", "/usr/local/var/empire"]
+ENV GAME_FILE=/app/game.yml
+CMD ["/usr/bin/ruby", "-e", "/app/setup.rb"]

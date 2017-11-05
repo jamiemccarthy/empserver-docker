@@ -1,0 +1,11 @@
+config:
+  privname: Your Name
+  privlog: your@email.here
+  WORLD_X: 64
+  WORLD_Y: 32
+fairland:
+  number_of_continents: 10
+  continent_size: 30
+players:
+  - name: alice
+  - name: bob
