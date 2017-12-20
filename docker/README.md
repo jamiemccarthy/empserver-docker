@@ -18,18 +18,18 @@ docker build -f docker/Dockerfile.setup .
 ### Here's how to set up a game
 
 # This runs the setup script in the setup image, creating a new game with the parameters you specify.
-# Use any unique volume name in place of "my_empire_volume" (that volume will be destroyed if it exists!)
-# (TODO: the TODO items in docker/setup-app/setup)
-docker volume rm -f my_empire_volume
-docker run -it --rm --mount type=volume,source=my_empire_volume,target=/usr/local/var/empire jamiemccarthy/empire4-setup:latest
+# Use any unique volume name in place of "empire_volume_1" (that volume will be destroyed if it exists!)
+# (TODO: the TODO items in docker/setup.rb)
+docker volume rm -f empire_volume_1
+docker run -it --rm --mount type=volume,source=empire_volume_1,target=/usr/local/var/empire jamiemccarthy/empire4-setup:latest
 
 # To check out the contents of a volume
-docker run -it --rm --mount type=volume,source=my_empire_volume,target=/usr/local/var/empire alpine:3.6 sh
+docker run -it --rm --mount type=volume,source=empire_volume_1,target=/usr/local/var/empire alpine:3.6 sh
 
 # This uses the volume you just set up to start a game.
-# Use any unique game name for the container, in place of "game1"
+# Use any unique game name for the container, in place of "empire_game_1"
 # (TODO: instructions to set the port?)
 # TODO: have Dockerfile.server start the empire server as its ENTRYPOINT
 # (but Dockerfile.setup then shouldn't be based FROM it I guess, no biggie)
-docker run --rm -p 6665:6665 --name game1 --mount type=volume,source=my_empire_volume,target=/usr/local/var/empire jamiemccarthy/empire4-server:latest
+docker run --rm -p 6665:6665 --name empire_game_1 --mount type=volume,source=empire_volume_1,target=/usr/local/var/empire jamiemccarthy/empire4-server:latest
 
