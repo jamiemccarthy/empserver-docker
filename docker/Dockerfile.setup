@@ -1,6 +1,6 @@
 FROM jamiemccarthy/empire4-server:latest
 
-RUN apk update && apk add --no-cache ruby ruby-json
+RUN apk add --no-cache ruby ruby-json
 ADD docker /app
 WORKDIR /app
 VOLUME ["/usr/local/var/empire"]
