@@ -20,7 +20,7 @@ def write_econfig
     end
   end
 
-  raise StandardError unless File.size? $econfig_custom_file
+  raise "error, could not write custom econfig" unless File.size? $econfig_custom_file
 end
 
 def process_econfig
@@ -28,7 +28,7 @@ def process_econfig
   system("/usr/local/sbin/pconfig #{$econfig_custom_file} > #{$econfig_output_file}")
   FileUtils.mv $econfig_output_file, $econfig_destination_file
 
-  raise StandardError unless File.size? $econfig_destination_file
+  raise "error, could not process econfig" unless File.size? $econfig_destination_file
 end
 
 def generate_game_files
@@ -36,7 +36,7 @@ def generate_game_files
   # "All praise to POGO!" output.
   system '/usr/local/sbin/files -f > /dev/null'
 
-  raise StandardError unless File.size? '/usr/local/var/empire/map'
+  raise "error, could not write game files" unless File.size? '/usr/local/var/empire/map'
 end
 
 def generate_land
@@ -46,7 +46,7 @@ def generate_land
   end.join(" ")
   system("/usr/local/sbin/fairland -s #{$newcap_script_file} #{fairland_args} > /dev/null")
 
-  raise StandardError unless File.size? '/usr/local/var/empire/sector'
+  raise "error, running fairland failed" unless File.size? '/usr/local/var/empire/sector'
 end
 
 # TODO: run the server, use PTY to connect to it, log in as POGO/peter,
@@ -61,4 +61,3 @@ write_econfig
 process_econfig
 generate_game_files
 generate_land
-
