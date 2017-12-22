@@ -18,15 +18,16 @@ You probably don't have to do these steps, you could just use the images
 on my Docker Hub. But if you want to, here's how I built those images.
 
 First, build an image that will build the binaries, and tag it to refer
-to it later:
+to it later. The `git gc` makes sure the image is as small as possible:
 
 ```
-$ docker build -f docker/Dockerfile.builder -t empire4-builder .
+$ git gc --aggressive && docker build -f docker/Dockerfile.builder -t empire4-builder .
 ```
 
-You can tag it whatever you want, but I'm suggesting `empire4-builder`
-here. I've pushed and will continue to push these builds to Docker Hub
-as `jamiemccarthy/empire4-builder`.
+You can tag your own image whatever you want, but I'm suggesting
+`empire4-builder` here, and I'll use `empire4-server` and `empire4-setup`
+below. I've pushed and will continue to push these builds to Docker Hub,
+so you can find them at `jamiemccarthy/empire4-IMAGETYPE`.
 
 Having built the image, run it to compile empire and install it into a
 fresh `docker/built-usr-local/` directory on the host. Compilation will
@@ -56,11 +57,18 @@ $ docker build -f docker/Dockerfile.setup -t empire4-setup .
 ## How to set up a game
 
 Pick any name you like for your new empire game volume as long as it's
-not already in use (here, `empire-volume-1`). Run the setup script:
+not already in use (here, `empire-volume-1`).
+
+Write a `game.yml` file for your game, based off `docker/game.yml`.
+
+Pipe that file to the setup script running in :
 
 ```
 $ docker volume rm -f empire-volume-1
-$ docker run --rm --mount type=volume,source=empire-volume-1,target=/usr/local/var/empire jamiemccarthy/empire4-setup:latest
+$ cat my-game.yml |                                                           \
+    docker run --rm -i -a stdin -a stdout -a stderr                           \
+      --mount type=volume,source=empire-volume-1,target=/usr/local/var/empire \
+      empire4-setup
 ```
 
 If you'd like to manually look at the files to verify you've got a new game
@@ -79,7 +87,8 @@ commodity  land       map        nuke       realms     sector     trade
 ## How to start your game running
 
 ```
-docker run --rm -d -p 6665:6665 --name empire-game-1 --mount type=volume,source=empire-volume-1,target=/usr/local/var/empire jamiemccarthy/empire4-server:latest /usr/local/sbin/emp_server -d
+docker run --rm -d -p 6665:6665 --name empire-game-1                                     \
+  --mount type=volume,source=empire-volume-1,target=/usr/local/var/empire empire4-server
 ```
 
 The container will run an empire game on the given volume, responding on
@@ -106,5 +115,6 @@ Thu Dec 21 18:29:21 2017 Server shutting down on signal 2
 
 * the TODO items in setup.rb
 * instructions to set the port - needed when running multiple games
-* put emp\_server as the ENTRYPOINT for empire4-server
-* clone from github instead of having the code in `/app/.git/` in empire4-builder?
+* clone from github instead of having the code in `/app/.git/` in empire4-builder? or does this defeat the purpose of being able to build locally? but the apk installs wouldn't work anyway
+* try out `--restart=failure` on empire4-server, see if it works
+* Dockerfile.builder exec-form ENTRYPOINT?

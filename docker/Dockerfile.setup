@@ -1,7 +1,7 @@
 FROM jamiemccarthy/empire4-server:latest
 
-RUN apk add --no-cache ruby ruby-json
-ADD docker /app
+RUN apk add --no-cache ruby ruby-json && gem install --no-document --quiet safe_yaml
+COPY docker/setup.rb /app/
 WORKDIR /app
 VOLUME ["/usr/local/var/empire"]
-CMD ["/usr/bin/ruby", "/app/setup.rb"]
+ENTRYPOINT ["/usr/bin/ruby", "/app/setup.rb"]

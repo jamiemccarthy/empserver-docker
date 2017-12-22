@@ -5,7 +5,9 @@ require 'fileutils'
 require 'json'
 
 def load_setup
-  $setup = YAML::load_file('game.yml')
+  # TODO switch to safe_yaml
+  $setup = YAML::load(STDIN.read)
+  raise "error, input was not parsed as YAML data" unless $setup
   $econfig_custom_file      = '/usr/local/etc/empire/econfig_custom'
   $econfig_output_file      = '/usr/local/etc/empire/econfig_output'
   $econfig_destination_file = '/usr/local/etc/empire/econfig'
