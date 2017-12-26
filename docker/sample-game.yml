@@ -6,6 +6,12 @@ config:
 fairland:
   number_of_continents: 10
   continent_size: 30
+  number_of_islands: 10
+  average_size_of_islands: 15
+  spike_percentage: 10
+  mountain_percentage: 0
+  continent_continent_minimum_distance: 2
+  continent_island_minimum_distance: 1
 players:
   - name: alice
   - name: bob

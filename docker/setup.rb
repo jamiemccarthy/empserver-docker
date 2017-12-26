@@ -13,6 +13,16 @@ def load_setup
   $econfig_destination_file = '/usr/local/etc/empire/econfig'
   $schedule_file            = '/usr/local/etc/empire/schedule'
   $newcap_script_file       = '/usr/local/etc/empire/newcap_script'
+  $fairland_arg_names = %w(
+    number_of_continents
+    continent_size
+    number_of_islands
+    average_size_of_islands
+    spike_percentage
+    mountain_percentage
+    continent_continent_minimum_distance
+    continent_island_minimum_distance
+  )
 end
 
 def write_econfig
@@ -54,11 +64,15 @@ def generate_game_files
 end
 
 def generate_land
-  fairland_args = %w( number_of_continents continent_size ).map do |arg|
-    # TODO defaults for these would be nice, but see 'man fairland', it's complicated
+  fairland_args = $fairland_arg_names.map do |arg|
     $setup['fairland'][arg].to_s
   end.join(" ")
-  system("/usr/local/sbin/fairland -q -s #{$newcap_script_file} #{fairland_args}")
+  seed_arg = if $setup['fairland']['seed'].present?
+               seed_arg = "-R #{$setup['fairland']['seed']}"
+             else
+               ""
+             end
+  system("/usr/local/sbin/fairland -q #{seed_arg} -s #{$newcap_script_file} #{fairland_args}")
 
   raise "error, running fairland failed" unless File.size? '/usr/local/var/empire/sector'
 end
