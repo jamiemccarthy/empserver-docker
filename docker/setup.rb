@@ -1,11 +1,11 @@
 #!/usr/bin/ruby
 
-require 'yaml'
+require 'safe_yaml'
 require 'fileutils'
 require 'json'
 
 def load_setup
-  # TODO switch to safe_yaml
+  SafeYAML::OPTIONS[:default_mode] = :safe
   $setup = YAML::load(STDIN.read)
   raise "error, input was not parsed as YAML data" unless $setup
   $econfig_custom_file      = '/usr/local/etc/empire/econfig_custom'
@@ -21,23 +21,22 @@ def write_econfig
       file.write("#{option} #{$setup['config'][option].to_json}\n")
     end
   end
-
   raise "error, could not write custom econfig" unless File.size? $econfig_custom_file
 end
 
 def process_econfig
-  # Process the custom econfig into a complete econfig
+  # Process the custom econfig into a complete econfig.
+  # TODO can pconfig fail and still write a file?
   system("/usr/local/sbin/pconfig #{$econfig_custom_file} > #{$econfig_output_file}")
+  raise "error, could not process econfig" unless File.size? $econfig_output_file
   FileUtils.mv $econfig_output_file, $econfig_destination_file
-
-  raise "error, could not process econfig" unless File.size? $econfig_destination_file
+  raise "error, could not copy econfig" unless File.size? $econfig_destination_file
 end
 
 def generate_game_files
-  # Process that to generate game files, with no overwrite prompt, and no
+  # Process the pconfig to generate game files, with no overwrite prompt, and no
   # "All praise to POGO!" output.
   system '/usr/local/sbin/files -f > /dev/null'
-
   raise "error, could not write game files" unless File.size? '/usr/local/var/empire/map'
 end
 
