@@ -58,7 +58,7 @@ def generate_land
     # TODO defaults for these would be nice, but see 'man fairland', it's complicated
     $setup['fairland'][arg].to_s
   end.join(" ")
-  system("/usr/local/sbin/fairland -s #{$newcap_script_file} #{fairland_args} > /dev/null")
+  system("/usr/local/sbin/fairland -q -s #{$newcap_script_file} #{fairland_args}")
 
   raise "error, running fairland failed" unless File.size? '/usr/local/var/empire/sector'
 end
