@@ -11,11 +11,14 @@ def load_setup
   $econfig_custom_file      = '/usr/local/etc/empire/econfig_custom'
   $econfig_output_file      = '/usr/local/etc/empire/econfig_output'
   $econfig_destination_file = '/usr/local/etc/empire/econfig'
+  $schedule_file            = '/usr/local/etc/empire/schedule'
   $newcap_script_file       = '/usr/local/etc/empire/newcap_script'
 end
 
 def write_econfig
   # Write an econfig file based on game.yml. We use to_json to quote-escape text.
+  # TODO emit messages to STDOUT if parameters "data" or "port" are changed,
+  # requiring the resulting volume to be invoked with different docker options.
   File.open($econfig_custom_file, 'w') do |file|
     %w( privname privlog WORLD_X WORLD_Y ).each do |option|
       file.write("#{option} #{$setup['config'][option].to_json}\n")
@@ -31,6 +34,16 @@ def process_econfig
   raise "error, could not process econfig" unless File.size? $econfig_output_file
   FileUtils.mv $econfig_output_file, $econfig_destination_file
   raise "error, could not copy econfig" unless File.size? $econfig_destination_file
+end
+
+def write_schedule
+  # TODO allow options here
+  File.open($schedule_file, 'w') do |file|
+    file.write('every 10 minutes')
+  end
+  raise "error, could not write schedule" unless File.size? $schedule_file
+  # TODO raise if this fails
+  system("/usr/local/sbin/empsched")
 end
 
 def generate_game_files
@@ -60,5 +73,6 @@ end
 load_setup
 write_econfig
 process_econfig
+write_schedule
 generate_game_files
 generate_land
