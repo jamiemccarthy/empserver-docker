@@ -3,6 +3,9 @@ config:
   privlog: your@email.here
   WORLD_X: 64
   WORLD_Y: 32
+schedule: |
+  # blitz game
+  every 10 minutes
 fairland:
   number_of_continents: 10
   continent_size: 30
@@ -12,6 +15,7 @@ fairland:
   mountain_percentage: 0
   continent_continent_minimum_distance: 2
   continent_island_minimum_distance: 1
+  seed: 1234
 players:
   - name: alice
   - name: bob

@@ -47,13 +47,12 @@ def process_econfig
 end
 
 def write_schedule
-  # TODO allow options here
   File.open($schedule_file, 'w') do |file|
-    file.write('every 10 minutes')
+    file.write($setup['schedule'])
   end
   raise "error, could not write schedule" unless File.size? $schedule_file
   # TODO raise if this fails
-  system("/usr/local/sbin/empsched")
+  system("/usr/local/sbin/empsched -n 0")
 end
 
 def generate_game_files
@@ -67,7 +66,7 @@ def generate_land
   fairland_args = $fairland_arg_names.map do |arg|
     $setup['fairland'][arg].to_s
   end.join(" ")
-  seed_arg = if $setup['fairland']['seed'].present?
+  seed_arg = if $setup['fairland']['seed']
                seed_arg = "-R #{$setup['fairland']['seed']}"
              else
                ""
