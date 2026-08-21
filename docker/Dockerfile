@@ -16,10 +16,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . /src
 
-# configure, aclocal.m4 and config.h.in are committed (see .gitignore).  COPY
-# does not guarantee they land newer than configure.ac, and Make.mk has
-# autoconf remake rules that would then fire.  Stamp them in dependency order.
-RUN cd /src && touch aclocal.m4 && touch configure stamp-h.in config.h.in
+# The files the dist tarball generates are committed (see .gitignore), but COPY
+# does not guarantee they land newer than their prerequisites, and Make.mk has
+# remake rules that fire when they don't.  The autoconf ones would need
+# autotools installed; the .tarball-version one (Make.mk:352) appends "-dirty"
+# to the version the server reports.  Stamp them in dependency order.
+RUN cd /src \
+    && touch aclocal.m4 \
+    && touch configure stamp-h.in config.h.in \
+    && touch .tarball-version \
+    && touch .dirty-stamp
 
 WORKDIR /build
 # Make.mk has no DESTDIR support, so install straight into the build stage's
