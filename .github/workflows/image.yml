@@ -1,0 +1,73 @@
+name: Image
+
+# Builds the server image and pushes it to ghcr.io as a public package, so the
+# host running a game can pull it without holding a registry credential.
+#
+# amd64 only.  The regression suite passes on x86-64 and has one known failure
+# on arm64 (a rounding difference in smoke/journal.log), and the deployment
+# target is x86-64 anyway.  Developing on an arm64 machine means building
+# locally, which is what `docker build -f docker/Dockerfile` already does.
+
+on:
+  push:
+    branches: [ v4.4.1-docker ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  image:
+    name: Build, test and push
+    runs-on: ubuntu-latest
+
+    # `packages: write` lets this job push to ghcr.io with the built-in
+    # GITHUB_TOKEN, so no personal access token is involved.
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # The regression suite, as a gate.  The `check` stage extends `build`,
+      # so this compiles the tree once and the push below reuses those layers.
+      - name: Run the Empire regression suite
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: check
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Log in to ghcr.io
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Three tags: the Empire version, the commit, and latest.  Pin the
+      # commit tag in whatever deploys this -- `4.4.1` moves whenever the
+      # container build changes, which is not what a running game wants.
+      - name: Build and push the server image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: server
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/empserver:4.4.1
+            ghcr.io/${{ github.repository_owner }}/empserver:sha-${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/empserver:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
