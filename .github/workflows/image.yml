@@ -10,7 +10,7 @@ name: Image
 
 on:
   push:
-    branches: [ v4.4.1-docker ]
+    branches: [ main ]
     tags: [ 'v*' ]
   pull_request:
   workflow_dispatch:
