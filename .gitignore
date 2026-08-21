@@ -49,12 +49,10 @@
 /autom4te.cache
 /sandbox
 /src/client/autom4te.cache
-# $(src_distgen)
-/aclocal.m4
-/config.h.in
-/configure
-/stamp-h.in
-/sources.mk
+# $(src_distgen) -- deliberately NOT ignored.  This tree vendors the upstream
+# 4.4.1 dist tarball rather than tracking upstream git, so configure and its
+# companions are committed and the container build needs no autotools.
+
 # Docker
 /docker/built-usr-local
 
