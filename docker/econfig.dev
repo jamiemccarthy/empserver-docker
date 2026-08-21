@@ -32,6 +32,15 @@ WORLD_X 64
 WORLD_Y 32
 etu_per_update 60
 
+# Per game, like the three settings above.  Stated explicitly because the
+# compiled-in default is on, so leaving the key out would quietly make this a
+# blitz, where a country that cannot afford a command has its BTUs refilled to
+# the maximum instead of the command being refused, `players` reports every
+# connected country to everyone rather than to allies and deities only, the
+# `sanc` login command exists, and renaming a country is free.  This one is
+# off, so that local development sees BTUs actually run out.
+BLITZ 0
+
 # Empire's own daily play limit, in minutes.  1440 turns it off; enforce any
 # real policy in the web client instead.
 m_m_p_d 1440
