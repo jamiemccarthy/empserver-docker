@@ -1,5 +1,0 @@
-FROM alpine:3.6
-
-ADD ["docker/built-usr-local", "/usr/local"]
-VOLUME ["/usr/local/var/empire"]
-ENTRYPOINT ["/usr/local/sbin/emp_server", "-d"]

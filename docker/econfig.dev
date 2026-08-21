@@ -1,0 +1,40 @@
+# Minimal econfig for local development.  Everything not set here keeps its
+# compiled-in default; run `pconfig` to see the full annotated list.
+#
+#   docker run -d --name empdev -p 127.0.0.1:6665:6665 \
+#     -v "$PWD/docker/econfig.dev:/usr/local/etc/empire/econfig:ro" \
+#     empserver:4.4.1
+#
+# Do not deploy this file: privip is disabled and max_idle is a day.
+
+data    "/usr/local/var/empire"
+info    "/usr/local/share/empire/info.nr"
+builtin "/usr/local/share/empire/builtin"
+
+listen_addr ""
+port "6665"
+
+# Deity logins are refused unless the client's address appears in privip, and
+# the test is a plain strstr() (see the TODO at src/lib/player/login.c:298), so
+# it is a coarse filter rather than an ACL.  Empty disables it.  A container
+# connecting over a Docker network never has a loopback address, so leaving the
+# shipped default of "127.0.0.1 ::1" locks the gateway out of POGO.
+privip ""
+
+# Never on in production: journalling logs every input line verbatim, so
+# `edit c <n> r <pw>` writes the password to journal.log.
+keep_journal 0
+
+privname "dev"
+privlog  "dev@example.invalid"
+
+WORLD_X 64
+WORLD_Y 32
+etu_per_update 60
+
+# Empire's own daily play limit, in minutes.  1440 turns it off; enforce any
+# real policy in the web client instead.
+m_m_p_d 1440
+
+# The gateway holds sessions open, so the 15 minute default would drop them.
+max_idle 1440
