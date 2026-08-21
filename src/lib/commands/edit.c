@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
  *     Chad Zabel, 1994
  *     Steve McClure, 1998-2000
  *     Ron Koenderink, 2003-2009
- *     Markus Armbruster, 2003-2016
+ *     Markus Armbruster, 2003-2018
  */
 
 #include <config.h>
@@ -63,7 +63,7 @@ static int edit_plane(struct plnstr *, char *, char *);
 static int edit_nuke(struct nukstr *, char *, char *);
 
 int
-edit(void)
+c_edit(void)
 {
     union empobj_storage item;
     char *what;
@@ -265,6 +265,28 @@ print_plane(struct plnstr *plane)
 }
 
 static void
+print_items(short item[])
+{
+    pr("  civ  mil   uw food   sh  gun  pet iron dust  bar  oil  lcm  hcm  rad\n"
+       "    c    m    u    f    s    g    p    i    d    B    o    l    h    r\n"
+       "%5d%5d%5d%5d%5d%5d%5d%5d%5d%5d%5d%5d%5d%5d\n",
+       item[I_CIVIL],
+       item[I_MILIT],
+       item[I_UW],
+       item[I_FOOD],
+       item[I_SHELL],
+       item[I_GUN],
+       item[I_PETROL],
+       item[I_IRON],
+       item[I_DUST],
+       item[I_BAR],
+       item[I_OIL],
+       item[I_LCM],
+       item[I_HCM],
+       item[I_RAD]);
+}
+
+static void
 print_land(struct lndstr *land)
 {
     pr("%s %s\n", prnatid(land->lnd_own), prland(land));
@@ -282,22 +304,7 @@ print_land(struct lndstr *land)
     pr("Retreat percentage <Z>: %d\n", land->lnd_retreat);
     pr("Retreat path <R>: '%s'\t\tRetreat Flags <W>: %d\n",
        land->lnd_rpath, land->lnd_rflags);
-    pr("civ mil  uw food shl gun  pet  irn  dst  oil  lcm  hcm rad\n");
-    pr("  c   m   u    f   s   g    p    i    d    o    l    h   r\n");
-    pr("%3d", land->lnd_item[I_CIVIL]);
-    pr("%4d", land->lnd_item[I_MILIT]);
-    pr("%4d", land->lnd_item[I_UW]);
-    pr("%5d", land->lnd_item[I_FOOD]);
-    pr("%4d", land->lnd_item[I_SHELL]);
-    pr("%4d", land->lnd_item[I_GUN]);
-    pr("%5d", land->lnd_item[I_PETROL]);
-    pr("%5d", land->lnd_item[I_IRON]);
-    pr("%5d", land->lnd_item[I_DUST]);
-    pr("%5d", land->lnd_item[I_OIL]);
-    pr("%5d", land->lnd_item[I_LCM]);
-    pr("%5d", land->lnd_item[I_HCM]);
-    pr("%4d", land->lnd_item[I_RAD]);
-    pr("\n");
+    print_items(land->lnd_item);
 }
 
 static void
@@ -316,22 +323,7 @@ print_ship(struct shpstr *ship)
        ship->shp_rpath, ship->shp_rflags);
     pr("Plague Stage <a>: %d\t\t", ship->shp_pstage);
     pr("Plague Time <b>: %d\n", ship->shp_ptime);
-    pr("civ mil  uw food shl gun  pet  irn  dst  oil  lcm  hcm rad\n");
-    pr("  c   m   u    f   s   g    p    i    d    o    l    h   r\n");
-    pr("%3d", ship->shp_item[I_CIVIL]);
-    pr("%4d", ship->shp_item[I_MILIT]);
-    pr("%4d", ship->shp_item[I_UW]);
-    pr("%5d", ship->shp_item[I_FOOD]);
-    pr("%4d", ship->shp_item[I_SHELL]);
-    pr("%4d", ship->shp_item[I_GUN]);
-    pr("%5d", ship->shp_item[I_PETROL]);
-    pr("%5d", ship->shp_item[I_IRON]);
-    pr("%5d", ship->shp_item[I_DUST]);
-    pr("%5d", ship->shp_item[I_OIL]);
-    pr("%5d", ship->shp_item[I_LCM]);
-    pr("%5d", ship->shp_item[I_HCM]);
-    pr("%4d", ship->shp_item[I_RAD]);
-    pr("\n");
+    print_items(ship->shp_item);
 }
 
 static void
@@ -859,6 +851,17 @@ edit_item(struct empobj *unit, short item[], struct ichrstr *ip, int arg,
 }
 
 static void
+edit_unit_item(struct empobj *unit, short item[], char *key, int arg,
+	       short lim[])
+{
+    char lowkey[2];
+
+    lowkey[0] = tolower(*key);
+    lowkey[1] = 0;
+    edit_item(unit, item, item_by_name(lowkey), arg, lim);
+}
+
+static void
 limit_item(struct empobj *unit, short item[], short lim[])
 {
     i_type it;
@@ -943,12 +946,13 @@ edit_ship(struct shpstr *ship, char *key, char *p)
     case 'p':
     case 'i':
     case 'd':
+    case 'B':
     case 'o':
     case 'l':
     case 'h':
     case 'r':
-	edit_item((struct empobj *)ship, ship->shp_item, item_by_name(key),
-		  arg, mcp->m_item);
+	edit_unit_item((struct empobj *)ship, ship->shp_item, key, arg,
+		       mcp->m_item);
 	break;
     default:
 	pr("huh? (%s)\n", key);
@@ -997,6 +1001,8 @@ edit_land(struct lndstr *land, char *key, char *p)
 	break;
     case 'F':
 	arg = LIMIT_TO(arg, 0, 127);
+	if (land->lnd_ship >= 0 || land->lnd_land >= 0)
+	    arg = 0;
 	divine_unit_change((struct empobj *)land, "Fortification",
 			   arg != land->lnd_harden, arg - land->lnd_harden,
 			   "from %d to %d", land->lnd_harden, arg);
@@ -1074,12 +1080,13 @@ edit_land(struct lndstr *land, char *key, char *p)
     case 'p':
     case 'i':
     case 'd':
+    case 'B':
     case 'o':
     case 'l':
     case 'h':
     case 'r':
-	edit_item((struct empobj *)land, land->lnd_item, item_by_name(key),
-		  arg, lcp->l_item);
+	edit_unit_item((struct empobj *)land, land->lnd_item, key, arg,
+		       lcp->l_item);
 	break;
     default:
 	pr("huh? (%s)\n", key);
@@ -1128,6 +1135,16 @@ edit_plane(struct plnstr *plane, char *key, char *p)
 			   "from %d to %d", plane->pln_tech, arg);
 	pln_set_tech(plane, arg);
 	break;
+    case 'F':
+	arg = LIMIT_TO(arg, 0, 127);
+	if (!(pcp->pl_flags & P_M)
+	    || plane->pln_ship >= 0 || plane->pln_land >= 0)
+	    arg = 0;
+	divine_unit_change((struct empobj *)plane, "Fortification",
+			   arg != plane->pln_harden, arg - plane->pln_harden,
+			   "from %d to %d", plane->pln_harden, arg);
+	plane->pln_harden = arg;
+	break;
     case 'r':
 	arg = LIMIT_TO(arg, 0, pl_range(pcp, plane->pln_tech));
 	divine_unit_change((struct empobj *)plane, "Range",
@@ -1169,6 +1186,8 @@ edit_plane(struct plnstr *plane, char *key, char *p)
 	divine_flag_change((struct empobj *)plane, "Flags",
 			   plane->pln_flags, arg, plane_flags);
 	plane->pln_flags = arg;
+	if (pln_is_in_orbit(plane))
+	    plane->pln_ship = plane->pln_land = -1;
 	break;
     default:
 	pr("huh? (%s)\n", key);

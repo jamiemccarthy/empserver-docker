@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -38,4 +38,4 @@
  * Table of nuke types
  * Initialized on startup from nuke.config and deity custom config (if any).
  */
-struct nchrstr nchr[N_MAXNUKE + 1];
+struct nchrstr nchr[NCHR_SZ];

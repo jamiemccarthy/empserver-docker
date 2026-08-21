@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -54,13 +54,13 @@ static int retreat(int);
 static int retreat_show(int, struct nstr_item *);
 
 int
-retr(void)
+c_retreat(void)
 {
     return retreat(EF_SHIP);
 }
 
 int
-lretr(void)
+c_lretreat(void)
 {
     return retreat(EF_LAND);
 }

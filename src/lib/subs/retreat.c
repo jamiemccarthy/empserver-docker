@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Steve McClure, 2000
  *     Ron Koenderink, 2005-2006
- *     Markus Armbruster, 2006-2015
+ *     Markus Armbruster, 2006-2021
  */
 
 #include <config.h>
@@ -67,7 +67,7 @@ consume_step(char *rpath, int *rflags)
 }
 
 void
-retreat_ship(struct shpstr *sp, natid own, char code)
+retreat_ship(struct shpstr *sp, natid own)
 {
     int n, i;
     struct emp_qelem list;
@@ -173,7 +173,7 @@ retreat_ships_step(struct emp_qelem *list, char step, natid actor)
 }
 
 void
-retreat_land(struct lndstr *lp, natid own, char code)
+retreat_land(struct lndstr *lp, natid own)
 {
     int n, i;
     struct emp_qelem list;

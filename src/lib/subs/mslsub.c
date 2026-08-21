@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Ken Stevens, 1995
  *     Steve McClure, 1996-2000
- *     Markus Armbruster, 2004-2012
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -257,7 +257,7 @@ msl_intercept(struct plnstr *msl, struct sctstr *sp, int sublaunch,
 	pp = &ip->plane;
 	if (pp->pln_own != sp->sct_own)
 	    continue;
-	if (mission_pln_equip(ip, NULL, 'i') < 0) {
+	if (mission_pln_equip(ip, NULL, 0) < 0) {
 	    emp_remque(qp);
 	    free(qp);
 	    continue;
@@ -275,7 +275,7 @@ msl_intercept(struct plnstr *msl, struct sctstr *sp, int sublaunch,
 	next = qp->q_forw;
 	ip = (struct plist *)qp;
 	pp = &ip->plane;
-	if (mission_pln_equip(ip, NULL, 'i') < 0) {
+	if (mission_pln_equip(ip, NULL, 0) < 0) {
 	    emp_remque(qp);
 	    free(qp);
 	    continue;
@@ -365,7 +365,7 @@ msl_abm_intercept(struct plnstr *msl, coord x, coord y, int sublaunch)
     struct emp_qelem irvlist;
 
     getsect(x, y, &sect);
-    msl_sel(&irvlist, x, y, msl->pln_own, P_N, P_O, 0);
+    msl_sel(&irvlist, x, y, msl->pln_own, P_N, 0, 0);
     return msl_intercept(msl, &sect, sublaunch,
 			 &irvlist, "warhead", "abm",
 			 sublaunch ? N_NUKE_SSTOP : N_NUKE_STOP);

@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -33,9 +33,6 @@
 #ifndef ARPA_INET_H
 #define ARPA_INET_H
 
-#include "sys/socket.h"
-
-extern const char *inet_ntop(int af, const void *src, char *dst,
-			     socklen_t cnt);
+#include "ws2tcpip.h"
 
 #endif /* ARPA_INET_H */

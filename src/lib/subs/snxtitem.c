@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Dave Pare, 1989
- *     Markus Armbruster, 2009-2011
+ *     Markus Armbruster, 2009-2020
  */
 
 #include <config.h>
@@ -241,7 +241,7 @@ snxtitem_use_condarg(struct nstr_item *np)
 
     if (!player->condarg)
 	return 1;
-    n = nstr_comp(np->cond, sizeof(np->cond) / sizeof(*np->cond),
+    n = nstr_comp(np->cond, ARRAY_SIZE(np->cond),
 		  np->type, player->condarg);
     if (n < 0)
 	return 0;

@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Dave Pare, 1989
  *     Steve McClure, 1998
- *     Markus Armbruster, 2004-2009
+ *     Markus Armbruster, 2004-2020
  */
 
 #include <config.h>
@@ -38,45 +38,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#ifdef _WIN32
-#include <windows.h>
-#endif
 #include "misc.h"
 #include "proto.h"
-
-#ifndef HAVE_GETPASS
-#define getpass ersatz_getpass
-static char *
-ersatz_getpass(char *prompt)
-{
-    static char buf[128];
-    char *p;
-    size_t len;
-#ifdef _WIN32
-    DWORD mode;
-    HANDLE input_handle = GetStdHandle(STD_INPUT_HANDLE);
-
-    if (GetConsoleMode(input_handle, &mode))
-	SetConsoleMode(input_handle, mode & ~ENABLE_ECHO_INPUT);
-    else
-#endif
-	printf("Note: your input is echoed to the screen\n");
-    printf("%s", prompt);
-    fflush(stdout);
-    p = fgets(buf, sizeof(buf), stdin);
-#ifdef _WIN32
-    if (GetConsoleMode(input_handle, &mode))
-	SetConsoleMode(input_handle, mode | ENABLE_ECHO_INPUT);
-#endif
-    if (!p)
-	return NULL;
-    len = strlen(p);
-    if (p[len - 1] == '\n')
-	p[len - 1] = 0;
-    return p;
-}
-#endif
 
 int
 login(int s, char *uname, char *cname, char *cpass,
@@ -123,7 +86,7 @@ login(int s, char *uname, char *cname, char *cpass,
 	return 0;
     }
     if (cpass == NULL) {
-	cpass = getpass("Your name? ");
+	cpass = get_password("Your name? ");
 	if (cpass == NULL || *cpass == 0)
 	    return 0;
     }

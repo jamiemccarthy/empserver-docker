@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Steve McClure, 1996
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2018
  */
 
 #include <config.h>
@@ -95,6 +95,8 @@ lnd_prewrite(int n, void *old, void *new)
     lp->lnd_land = land;
     if (!own || lp->lnd_x != oldlp->lnd_x || lp->lnd_y != oldlp->lnd_y)
 	unit_update_cargo((struct empobj *)lp);
+    if (ship >= 0 || land >= 0)
+	lp->lnd_harden = 0;
 }
 
 char *

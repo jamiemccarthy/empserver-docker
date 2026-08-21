@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  *  item.h: Definitions for item characteristics stuff
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2020
  */
 
 #ifndef ITEM_H
@@ -80,7 +80,8 @@ struct ichrstr {
 
 /* variables using this structure */
 
-extern struct ichrstr ichr[I_MAX + 2];
+#define ICHR_SZ (I_MAX + 2)
+extern struct ichrstr ichr[ICHR_SZ];
 
 /* procedures using/returning this struct */
 

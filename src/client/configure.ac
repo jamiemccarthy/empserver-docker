@@ -1,6 +1,6 @@
 #
 #   Empire - A multi-player, client/server Internet based war game.
-#   Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+#   Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
 #                 Ken Stevens, Steve McClure, Markus Armbruster
 #
 #   Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 #   configure.ac: Autoconf input file
 #
 #   Known contributors to this file:
-#      Markus Armbruster, 2005-2016
+#      Markus Armbruster, 2005-2020
 #
 # Process this file with autoconf to produce a configure script.
 
@@ -43,6 +43,9 @@ AC_INIT([Wolfpack Empire Client],
 	[http://www.wolfpackempire.com/])
 AC_CONFIG_SRCDIR([empire.6])
 AC_CONFIG_HEADERS([config.h])
+
+AC_DEFINE([_XOPEN_SOURCE], [600],
+	  [Request POSIX-1.2001 with XSI Extension])
 
 
 ### Checks for programs.
@@ -76,7 +79,7 @@ fi
 
 ### Checks for library functions.
 
-AC_CHECK_FUNCS(getaddrinfo getpass)
+AC_CHECK_FUNCS(getaddrinfo)
 
 
 ### Site configuration

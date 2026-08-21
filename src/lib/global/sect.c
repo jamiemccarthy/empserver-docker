@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -43,10 +43,10 @@
  * Initialized on startup from sect.config and deity custom config (if any).
  * Terminated by a sentinel with null d_name.
  */
-struct dchrstr dchr[SCT_TYPE_MAX + 2];
+struct dchrstr dchr[DCHR_SZ];
 
 /*
  * Table of infrastructure types
  * Initialized on startup from infra.config and deity custom config (if any).
  */
-struct sctintrins intrchr[INT_DEF + 2];
+struct sctintrins intrchr[INTRCHR_SZ];

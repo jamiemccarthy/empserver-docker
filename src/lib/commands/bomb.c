@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Ken Stevens, 1995
  *     Steve McClure, 1998-2000
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -61,7 +61,7 @@ static int pinflak_planedamage(struct plnstr *, struct plchrstr *,
 			       natid, int);
 
 int
-bomb(void)
+c_bomb(void)
 {
     char *p;
     coord tx, ty;
@@ -426,7 +426,7 @@ ship_bomb(struct emp_qelem *list, struct sctstr *target)
 	} else {
 	    pr("splash\n");
 	    /* Bombs that miss have to land somewhere! */
-	    dam = pln_damage(&plp->plane, 'p', 0);
+	    dam = pln_damage(&plp->plane, 'p', NULL);
 	    collateral_damage(target->sct_x, target->sct_y, dam);
 	    continue;
 	}
@@ -446,9 +446,9 @@ ship_bomb(struct emp_qelem *list, struct sctstr *target)
 	       prship(&ship),
 	       xyas(target->sct_x, target->sct_y, player->cnum));
 	if (dam && (ship.shp_rflags & RET_INJURED))
-	    retreat_ship(&ship, ship.shp_own, 'i');
+	    retreat_ship(&ship, ship.shp_own);
 	else if (ship.shp_rflags & RET_BOMBED)
-	    retreat_ship(&ship, ship.shp_own, 'b');
+	    retreat_ship(&ship, ship.shp_own);
 	putship(ship.shp_uid, &ship);
 	collateral_damage(target->sct_x, target->sct_y, dam / 2);
     }
@@ -524,7 +524,7 @@ plane_bomb(struct emp_qelem *list, struct sctstr *target)
 	} else {
 	    pr("thud\n");
 	    /* Bombs that miss have to land somewhere! */
-	    dam = pln_damage(&plp->plane, 'p', 0);
+	    dam = pln_damage(&plp->plane, 'p', NULL);
 	    collateral_damage(target->sct_x, target->sct_y, dam);
 	    continue;
 	}
@@ -624,7 +624,7 @@ land_bomb(struct emp_qelem *list, struct sctstr *target)
 	} else {
 	    pr("thud\n");
 	    /* Bombs that miss have to land somewhere! */
-	    dam = pln_damage(&plp->plane, 'p', 0);
+	    dam = pln_damage(&plp->plane, 'p', NULL);
 	    collateral_damage(target->sct_x, target->sct_y, dam);
 	    continue;
 	}
@@ -637,9 +637,9 @@ land_bomb(struct emp_qelem *list, struct sctstr *target)
 		xyas(target->sct_x, target->sct_y, own));
 	landdamage(&land, dam);
 	if (dam && (land.lnd_rflags & RET_INJURED))
-	    retreat_land(&land, own, 'i');
+	    retreat_land(&land, own);
 	else if (land.lnd_rflags & RET_BOMBED)
-	    retreat_land(&land, own, 'b');
+	    retreat_land(&land, own);
 	nreport(player->cnum, N_UNIT_BOMB, own, 1);
 	putland(land.lnd_uid, &land);
 	collateral_damage(target->sct_x, target->sct_y, dam);

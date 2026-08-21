@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Ville Virrankoski, 1995
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2020
  */
 
 #ifndef UPDATE_H
@@ -59,7 +59,7 @@ struct budg_item {
 /* A nation's budget for an update */
 struct budget {
     /* production by sector type */
-    struct budg_item prod[SCT_TYPE_MAX + 1];
+    struct budg_item prod[ARRAY_SIZE(dchr) - 1];
     /* level production output */
     float level[4];
     /* building and maintenance */
@@ -140,8 +140,6 @@ extern void pay_reserve(struct natstr *, int);
 /* produce.c */
 extern void produce(struct natstr *, struct sctstr *);
 extern double prod_output(struct sctstr *, double);
-extern double prod_materials_cost(struct pchrstr *, short[], int *);
-extern double prod_resource_limit(struct pchrstr *, unsigned char *);
 extern double prod_eff(int, float);
 /* removewants.c */
 extern int update_removewants(void);

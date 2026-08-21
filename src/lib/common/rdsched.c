@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,9 +29,6 @@
  *  Known contributors to this file:
  *     Markus Armbruster, 2007-2011
  */
-
-/* Required for strptime() */
-#define _XOPEN_SOURCE 500
 
 #include <config.h>
 

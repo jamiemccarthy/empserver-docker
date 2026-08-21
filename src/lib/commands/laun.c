@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Ken Stevens, 1995
  *     Steve McClure, 1998-2000
- *     Markus Armbruster, 2005-2015
+ *     Markus Armbruster, 2005-2021
  */
 
 #include <config.h>
@@ -56,7 +56,7 @@ static int msl_equip(struct plnstr *, char);
  * laun <PLANES>
  */
 int
-laun(void)
+c_launch(void)
 {
     struct nstr_item nstr;
     struct plnstr plane;
@@ -151,7 +151,7 @@ launch_as(struct plnstr *pp)
 	pr("Range too great!\n");
 	return RET_FAIL;
     }
-    if (msl_equip(pp, 'i') < 0)
+    if (msl_equip(pp, 0) < 0)
 	return RET_FAIL;
     if (msl_launch(pp, EF_PLANE, prplane(&plane),
 		   plane.pln_x, plane.pln_y, plane.pln_own, NULL) < 0)
@@ -263,7 +263,8 @@ launch_missile(struct plnstr *pp)
 		       target_ship.shp_x, target_ship.shp_y,
 		       target_ship.shp_own, &sublaunch) < 0)
 	    return RET_OK;
-	getship(n, &target_ship);
+	/* @target_ship may have expended shells defending */
+	getship(target_ship.shp_uid, &target_ship);
 	if (!msl_hit(pp, shp_hardtarget(&target_ship), EF_SHIP,
 		     N_SHP_MISS, N_SHP_SMISS, sublaunch,
 		     target_ship.shp_own)) {
@@ -277,7 +278,7 @@ launch_missile(struct plnstr *pp)
 	if (target_ship.shp_effic < SHIP_MINEFF)
 	    pr("%s sunk!\n", prship(&target_ship));
 	if (dam && (target_ship.shp_rflags & RET_INJURED))
-	    retreat_ship(&target_ship, target_ship.shp_own, 'i');
+	    retreat_ship(&target_ship, target_ship.shp_own);
 	putship(target_ship.shp_uid, &target_ship);
     }
     return RET_OK;
@@ -345,6 +346,7 @@ launch_sat(struct plnstr *pp)
     CANT_HAPPEN(pp->pln_flags & PLN_LAUNCHED);
     pp->pln_flags |= PLN_LAUNCHED;
     pp->pln_mobil = pp->pln_mobil > dist ? pp->pln_mobil - dist : 0;
+    pp->pln_ship = pp->pln_land = -1;
     putplane(pp->pln_uid, pp);
     pr("%s positioned over %s, will be ready for use in %d time units\n",
        prplane(pp), xyas(sx, sy, player->cnum),

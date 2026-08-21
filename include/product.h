@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ struct pchrstr {
     int p_uid;
     i_type p_ctype[MAXPRCON];	/* constituent types */
     unsigned short p_camt[MAXPRCON]; /* constituent amounts */
+    int p_bwork;		/* work to build one product unit */
     i_type p_type;		/* product item type, or I_NONE if level */
     int p_level;		/* level index (NAT_?LEV), or -1 if item */
     int p_cost;			/* dollars / product unit */
@@ -57,8 +58,7 @@ struct pchrstr {
     char *p_sname;		/* short (7 char or less) name of product */
 };
 
-#define P_MAX 22
-
-extern struct pchrstr pchr[P_MAX + 2];
+#define PCHR_SZ 32
+extern struct pchrstr pchr[PCHR_SZ];
 
 #endif

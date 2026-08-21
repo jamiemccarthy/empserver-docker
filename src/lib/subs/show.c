@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
  *     Jeff Bailey, 1990
  *     Steve McClure, 1996
  *     Ron Koenderink, 2005-2009
- *     Markus Armbruster, 2006-2017
+ *     Markus Armbruster, 2006-2021
  */
 
 #include <config.h>
@@ -187,7 +187,7 @@ show_nuke_stats(int tlev)
 void
 show_nuke_build(int tlev)
 {
-    struct chr_index chridx[sizeof(nchr) / sizeof(*nchr)];
+    struct chr_index chridx[ARRAY_SIZE(nchr)];
     int n = make_nchr_index(chridx, tlev);
     int i;
     struct nchrstr *np;
@@ -208,7 +208,7 @@ show_nuke_build(int tlev)
 void
 show_nuke_capab(int tlev)
 {
-    struct chr_index chridx[sizeof(nchr) / sizeof(*nchr)];
+    struct chr_index chridx[ARRAY_SIZE(nchr)];
     int n = make_nchr_index(chridx, tlev);
     int i;
     struct nchrstr *np;
@@ -230,7 +230,7 @@ show_nuke_capab(int tlev)
 void
 show_ship_build(int tlev)
 {
-    struct chr_index chridx[sizeof(mchr) / sizeof(*mchr)];
+    struct chr_index chridx[ARRAY_SIZE(mchr)];
     int n = make_mchr_index(chridx, tlev);
     int i;
     struct mchrstr *mp;
@@ -247,7 +247,7 @@ show_ship_build(int tlev)
 void
 show_ship_stats(int tlev)
 {
-    struct chr_index chridx[sizeof(mchr) / sizeof(*mchr)];
+    struct chr_index chridx[ARRAY_SIZE(mchr)];
     int n = make_mchr_index(chridx, tlev);
     int i;
     struct mchrstr *mp;
@@ -268,7 +268,7 @@ show_ship_stats(int tlev)
 void
 show_ship_capab(int tlev)
 {
-    struct chr_index chridx[sizeof(mchr) / sizeof(*mchr)];
+    struct chr_index chridx[ARRAY_SIZE(mchr)];
     int n = make_mchr_index(chridx, tlev);
     int i;
     struct mchrstr *mp;
@@ -286,7 +286,7 @@ show_ship_capab(int tlev)
 void
 show_plane_stats(int tlev)
 {
-    struct chr_index chridx[sizeof(plchr) / sizeof(*plchr)];
+    struct chr_index chridx[ARRAY_SIZE(plchr)];
     int n = make_plchr_index(chridx, tlev);
     int i;
     struct plchrstr *pp;
@@ -304,7 +304,7 @@ show_plane_stats(int tlev)
 void
 show_plane_capab(int tlev)
 {
-    struct chr_index chridx[sizeof(plchr) / sizeof(*plchr)];
+    struct chr_index chridx[ARRAY_SIZE(plchr)];
     int n = make_plchr_index(chridx, tlev);
     int i;
     struct plchrstr *pp;
@@ -321,7 +321,7 @@ show_plane_capab(int tlev)
 void
 show_plane_build(int tlev)
 {
-    struct chr_index chridx[sizeof(plchr) / sizeof(*plchr)];
+    struct chr_index chridx[ARRAY_SIZE(plchr)];
     int n = make_plchr_index(chridx, tlev);
     int i;
     struct plchrstr *pp;
@@ -339,7 +339,7 @@ show_plane_build(int tlev)
 void
 show_land_build(int tlev)
 {
-    struct chr_index chridx[sizeof(lchr) / sizeof(*lchr)];
+    struct chr_index chridx[ARRAY_SIZE(lchr)];
     int n = make_lchr_index(chridx, tlev);
     int i;
     struct lchrstr *lp;
@@ -358,7 +358,7 @@ show_land_build(int tlev)
 void
 show_land_capab(int tlev)
 {
-    struct chr_index chridx[sizeof(lchr) / sizeof(*lchr)];
+    struct chr_index chridx[ARRAY_SIZE(lchr)];
     int n = make_lchr_index(chridx, tlev);
     int i;
     struct lchrstr *lcp;
@@ -376,7 +376,7 @@ show_land_capab(int tlev)
 void
 show_land_stats(int tlev)
 {
-    struct chr_index chridx[sizeof(lchr) / sizeof(*lchr)];
+    struct chr_index chridx[ARRAY_SIZE(lchr)];
     int n = make_lchr_index(chridx, tlev);
     int i;
     struct lchrstr *lcp;
@@ -508,7 +508,7 @@ show_product(int tlev)
     int i;
     char *lev;
 
-    pr("product    cost  raw materials  reso dep  level p.e.\n");
+    pr("product    cost  raw materials  avail   reso dep  level p.e.\n");
 
     for (pp = pchr; pp->p_sname; pp++) {
 	if (!pp->p_sname[0])
@@ -525,11 +525,12 @@ show_product(int tlev)
 	    else
 		pr("    ");
 	}
+	pr(" %8d", pp->p_bwork);
 	if (pp->p_nrndx)
-	    pr("   %5.5s %3d  ",
+	    pr("  %5.5s %3d  ",
 	       symbol_by_value(pp->p_nrndx, resources), pp->p_nrdep);
 	else
-	    pr("              ");
+	    pr("             ");
 	if (pp->p_nlndx < 0)
 	    pr("1.0\n");
 	else {
@@ -614,34 +615,10 @@ static char *
 fmttime2822(time_t t)
 {
     static char buf[32];
-#if defined(_WIN32)
-    size_t n;
-    int nn;
-    TIME_ZONE_INFORMATION tzi;
-    long time_offset;
-    struct tm *time;
-
-    time = localtime(&t);
-
-    n = strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S", time);
-    if (CANT_HAPPEN(n == 0)) {
-	buf[0] = 0;
-	return buf;
-    }
-    GetTimeZoneInformation(&tzi);
-    time_offset = -(tzi.Bias +
-	(time->tm_isdst ? tzi.DaylightBias : tzi.StandardBias));
-
-    nn = _snprintf(buf + n, sizeof(buf) - n, " %+03ld%02ld",
-		   time_offset / 60, labs(time_offset) % 60);
-    if (CANT_HAPPEN(nn <= 0 || nn + n >= sizeof(buf)))
-	buf[0] = 0;
-#else
-    size_t n = strftime(buf, sizeof(buf), "%a, %d %b %Y %T %z",
+    size_t n = strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %z",
 			localtime(&t));
     if (CANT_HAPPEN(n == 0))
 	buf[0] = 0;
-#endif
     return buf;
 }
 

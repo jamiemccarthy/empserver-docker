@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Jim Griffith, 1989
  *     Ken Stevens, 1995
- *     Markus Armbruster, 2004-2015
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -46,7 +46,7 @@
 static int blankrow(char *);
 
 int
-sona(void)
+c_sonar(void)
 {
     struct nstr_item ni, nit;
     struct sctstr sect;
@@ -163,7 +163,7 @@ sona(void)
 		       xyas(ship.shp_x, ship.shp_y,
 			    targ.shp_own), prship(&targ));
 		if (targ.shp_rflags & RET_SONARED)
-		    retreat_ship(&targ, targ.shp_own, 's');
+		    retreat_ship(&targ, targ.shp_own);
 	    }
 	    if (dist > vrange)
 		continue;

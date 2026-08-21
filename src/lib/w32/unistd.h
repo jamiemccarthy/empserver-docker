@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  *  unistd.h: POSIX emulation for Windows
  *
  *  Known contributors to this file:
- *     Ron Koenderink, 2007
+ *     Ron Koenderink, 2007-2021
  *     Markus Armbruster, 2007-2013
  */
 
@@ -46,7 +46,6 @@
  * here.  Major name space pollution, can't be helped.
  */
 #include <direct.h>
-#include <getopt.h>
 #include <io.h>
 #include <process.h>
 #include <sys/stat.h>
@@ -60,6 +59,7 @@
 extern int w32_mkdir(const char *dirname, mode_t perm);
 
 /* Should be in sys/stat.h */
+#ifdef _MSC_VER
 #ifndef S_IRUSR
 #define S_IRUSR	    _S_IREAD
 #define S_IWUSR	    _S_IWRITE
@@ -78,22 +78,34 @@ extern int w32_mkdir(const char *dirname, mode_t perm);
 #define S_IXOTH	    0
 #define S_IRWXO	    S_IROTH | S_IWOTH | S_IXOTH
 #endif
+#endif
 
 /* Should be in fcntl.h */
+/* HACK, for use with fcntl() on a socket only, see w32sockets.c */
 #define O_NONBLOCK  1
-
 #define F_GETFL	    1
 #define F_SETFL	    2
-
 extern int fcntl(int fd, int cmd, ...);
 
 /* Stuff that actually belongs here */
 #define close(fd) w32_close_function((fd))
 extern int (*w32_close_function)(int);
-#define ftruncate(fd, length) _chsize((fd), (length))
 #define read(fd, buf, sz) w32_read_function((fd), (buf), (sz))
 extern int (*w32_read_function)(int, void *, unsigned);
 #define write(fd, buf, sz) w32_write_function((fd), (buf), (sz))
 extern int (*w32_write_function)(int, const void *, unsigned);
+#ifdef _MSC_VER
+#define ftruncate(fd, length) _chsize((fd), (length))
+#endif
+
+#ifdef _MSC_VER
+extern int getopt(int, char * const [], const char *);
+extern	 char *optarg;
+extern	 int opterr;
+extern	 int optind;
+extern	 int optopt;
+#else  /* !_MSC_VER */
+#include_next <unistd.h>
+#endif
 
 #endif /* UNISTD_H */

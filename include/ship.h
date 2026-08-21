@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
  *     Thomas Ruschak, 1992
  *     Ken Stevens, 1995
  *     Steve McClure, 1998
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2020
  */
 
 #ifndef SHIP_H
@@ -42,7 +42,6 @@
 #include "retreat.h"
 #include "types.h"
 
-#define SHP_TYPE_MAX	46
 #define SHIP_MINEFF	20
 
 #define MAXSHPNAMLEN	24
@@ -105,8 +104,6 @@ struct mchrstr {
 #define M_TORP		bit(1)	/* fire torpedoes */
 #define M_DCH		bit(2)	/* drop depth charges on subs */
 #define M_FLY		bit(3)	/* launch and recover planes */
-/* M_MSL will be automatically set in init_mchr() if m_nplanes > 0
-   and M_FLY is not set */
 #define M_MSL		bit(4)	/* launch missiles */
 #define M_OIL		bit(5)	/* drill for oil */
 #define M_SONAR		bit(6)	/* locate submarines */
@@ -129,7 +126,8 @@ struct mchrstr {
 #define putship(n, p) ef_write(EF_SHIP, (n), (p))
 #define getshipp(n) ((struct shpstr *)ef_ptr(EF_SHIP, (n)))
 
-extern struct mchrstr mchr[SHP_TYPE_MAX + 2];
+#define MCHR_SZ 128
+extern struct mchrstr mchr[MCHR_SZ];
 
 enum {
     SHP_AIROPS_EFF = 50,	/* min. efficiency for air ops */

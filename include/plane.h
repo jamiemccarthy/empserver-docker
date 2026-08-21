@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Ken Stevens, 1995
  *     Steve McClure, 1998
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2020
  */
 
 #ifndef PLANE_H
@@ -41,7 +41,6 @@
 #include "queue.h"
 #include "types.h"
 
-#define PLN_TYPE_MAX	46
 #define PLANE_MINEFF	10
 
 struct plnstr {
@@ -135,7 +134,8 @@ struct plist {
 #define putplane(n, p) ef_write(EF_PLANE, (n), (p))
 #define getplanep(n) ((struct plnstr *)ef_ptr(EF_PLANE, (n)))
 
-extern struct plchrstr plchr[PLN_TYPE_MAX + 2];
+#define PLCHR_SZ 128
+extern struct plchrstr plchr[PLCHR_SZ];
 
 struct shiplist {
     int uid;

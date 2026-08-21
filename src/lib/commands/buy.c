@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Pat Loney, 1992
  *     Steve McClure, 1996-2000
- *     Markus Armbruster, 2004-2013
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -48,7 +48,7 @@
  *
  */
 int
-buy(void)
+c_buy(void)
 {
     struct sctstr sect;
     struct natstr *natp;
@@ -101,6 +101,8 @@ buy(void)
     bid = atof(p);
     if (bid <= 0)
 	return RET_FAIL;
+    if (!check_comm_ok(&comm))
+	return RET_FAIL;
     if (natp->nat_money < bid * comm.com_amount * buytax) {
 	pr("This purchase would cost %.2f, %.2f more than you have.\n",
 	   bid * comm.com_amount * buytax,
@@ -112,8 +114,10 @@ buy(void)
     this part up.*/
     tally = 0.0;
     for (n = 0; gettrade(n, &tmpt); n++) {
+	if (!tmpt.trd_owner)
+	    continue;
 	if (tmpt.trd_maxbidder == player->cnum &&
-	    tmpt.trd_unitid >= 0 && tmpt.trd_owner != player->cnum) {
+	    tmpt.trd_owner != player->cnum) {
 	    tally += tmpt.trd_price * tradetax;
 	}
     }
@@ -124,7 +128,6 @@ buy(void)
 	}
     }
     canspend = natp->nat_money - tally;
-    check_comm_ok(&comm);
     if (bid * comm.com_amount * buytax > canspend) {
 	pr("You have overextended yourself in the market\n");
 	pr("You can not bid on the current items at that price.\n");
@@ -138,6 +141,8 @@ buy(void)
 	pr("Could not access sector");
 	return RET_FAIL;
     }
+    if (!check_comm_ok(&comm))
+	return RET_FAIL;
     if ((sect.sct_type != SCT_WAREH && sect.sct_type != SCT_HARBR) ||
 	sect.sct_own != player->cnum) {
 	pr("The destination sector is not one of your warehouses.\n");
@@ -158,8 +163,6 @@ buy(void)
 	pr("You don't have that much to spend!\n");
 	return RET_FAIL;
     }
-    if (!check_comm_ok(&comm))
-	return RET_FAIL;
     if (bid > 0.04 + comm.com_price) {
 	comm.com_price = bid;
 	time(&now);

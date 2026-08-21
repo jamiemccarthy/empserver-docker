@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Dave Pare, 1994
- *     Markus Armbruster, 2005-2014
+ *     Markus Armbruster, 2005-2020
  */
 
 #include <config.h>
@@ -228,10 +228,12 @@ sockaddr_ntop(struct sockaddr *sap, char *buf, size_t bufsz)
     else {
 	sap6 = (struct sockaddr_in6 *)sap;
 	addr = &sap6->sin6_addr;
+#ifdef HAVE_WORKING_IN6_IS_ADDR_V4MAPPED
 	if (IN6_IS_ADDR_V4MAPPED(&sap6->sin6_addr)) {
 	    af = AF_INET;
 	    addr = sap6->sin6_addr.s6_addr + 12;
 	}
+#endif
     }
     return inet_ntop(af, addr, buf, bufsz);
 #else

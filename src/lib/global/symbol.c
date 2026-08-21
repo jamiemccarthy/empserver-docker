@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,12 +27,13 @@
  *  symbol.c: Empire symbol tables
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2006-2016
+ *     Markus Armbruster, 2006-2020
  */
 
 #include <config.h>
 
 #include "land.h"
+#include "loan.h"
 #include "misc.h"
 #include "mission.h"
 #include "nat.h"
@@ -46,9 +47,9 @@
 #include "ship.h"
 
 struct symbol agreement_statuses[] = {
-    {AGREE_FREE, "free"},
-    {AGREE_PROPOSED, "proposed"},
-    {AGREE_SIGNED, "signed"},
+    {LS_FREE, "free"},
+    {LS_PROPOSED, "proposed"},
+    {LS_SIGNED, "signed"},
     {0, NULL}
 };
 

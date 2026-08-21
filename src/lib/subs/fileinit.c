@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Ron Koenderink, 2005
- *     Markus Armbruster, 2005-2016
+ *     Markus Armbruster, 2005-2020
  */
 
 #include <config.h>
@@ -63,7 +63,7 @@ ef_init_srv(int force_bad_state)
 {
     unsigned i;
 
-    for (i = 0; i < sizeof(fileinit) / sizeof(fileinit[0]); i++) {
+    for (i = 0; i < ARRAY_SIZE(fileinit); i++) {
 	empfile[fileinit[i].ef_type].postread = fileinit[i].postread;
 	empfile[fileinit[i].ef_type].prewrite = fileinit[i].prewrite;
 	empfile[fileinit[i].ef_type].onresize = fileinit[i].onresize;

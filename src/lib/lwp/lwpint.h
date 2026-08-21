@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1994-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1994-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *  Copyright (C) 1991-3 Stephen Crane
  *
@@ -28,15 +28,14 @@
  *  lwpint.h: lwp internal structures
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2004-2009
+ *     Markus Armbruster, 2004-2021
  */
 
 #ifndef LWPINT_H
 #define LWPINT_H
 
-#include <signal.h>
 #include <time.h>
-#include <ucontext.h>
+#include <signal.h>
 
 #include "misc.h"
 
@@ -82,7 +81,7 @@ void lwpEntryPoint(void);
 void lwpInitSelect(struct lwpProc *);
 void lwpWakeupSleep(void);
 void lwpSelect(void *);
-void lwpInitSigWait(sigset_t *);
+void lwpInitSigWait(int[]);
 void lwpSigWakeup(void);
 void lwpStatus(struct lwpProc *, char *, ...)
     ATTRIBUTE((format (printf, 2, 3)));

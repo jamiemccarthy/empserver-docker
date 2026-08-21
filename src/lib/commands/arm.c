@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Ken Stevens, 1995
  *     Steve McClure, 2000
- *     Markus Armbruster, 2006-2011
+ *     Markus Armbruster, 2006-2018
  */
 
 #include <config.h>
@@ -42,7 +42,7 @@
 #include "plane.h"
 
 int
-arm(void)
+c_arm(void)
 {
     struct nchrstr *ncp;
     struct plchrstr *plc;
@@ -61,11 +61,13 @@ arm(void)
 	    && relations_with(pl.pln_own, player->cnum) != ALLIED)
 	    continue;
 	plc = &plchr[(int)pl.pln_type];
-	if ((plc->pl_flags & (P_O | P_N | P_MAR))
-	    || (plc->pl_flags & (P_M | P_F)) == (P_M | P_F)) {
+	if (!(plc->pl_flags & (P_B | P_T | P_C))
+	    || (plc->pl_flags & P_MAR)) {
 	    pr("A %s cannot carry nuclear devices!\n", plc->pl_name);
 	    return RET_FAIL;
 	}
+	if (CANT_HAPPEN(pl.pln_flags & PLN_LAUNCHED))
+	    continue;
 	if (opt_MARKET) {
 	    if (ontradingblock(EF_PLANE, &pl)) {
 		pr("You cannot arm %s while it is on the trading block!\n",
@@ -130,7 +132,7 @@ arm(void)
 }
 
 int
-disarm(void)
+c_disarm(void)
 {
     struct plnstr pl;
     struct nukstr nuke;
@@ -144,6 +146,8 @@ disarm(void)
 	if (!player->owner)
 	    continue;
 	if (!getnuke(nuk_on_plane(&pl), &nuke))
+	    continue;
+	if (CANT_HAPPEN(pl.pln_flags & PLN_LAUNCHED))
 	    continue;
 	if (opt_MARKET) {
 	    if (ontradingblock(EF_PLANE, &pl)) {

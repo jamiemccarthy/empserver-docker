@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -128,7 +128,8 @@ journal_entry_end(int newline, int flush)
     if (!newline)
 	fputc('\\', journal);
     fputc('\n', journal);
-    fflush(journal);
+    if (flush)
+	fflush(journal);
     if (ferror(journal)) {
 	logerror("Error writing journal (%s)", strerror(errno));
 	clearerr(journal);

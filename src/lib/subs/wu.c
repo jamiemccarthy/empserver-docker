@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Steve McClure, 2000
- *     Markus Armbruster, 2005-2016
+ *     Markus Armbruster, 2005-2021
  */
 
 #include <config.h>
@@ -110,14 +110,16 @@ typed_wu(natid from, natid to, char *message, int type)
     char box[1024];
     struct player *other;
 
-    if (type == TEL_ANNOUNCE)
+    if (type == TEL_ANNOUNCE) {
 	strcpy(box, annfil);
-    else
+	np = NULL;
+    } else {
 	mailbox(box, to);
-
-    if (type != TEL_ANNOUNCE)
-	if (!(np = getnatp(to)) || np->nat_stat < STAT_SANCT)
+	np = getnatp(to);
+	if (!np || np->nat_stat < STAT_SANCT)
 	    return -1;
+    }
+
 #if !defined(_WIN32)
     if ((fd = open(box, O_WRONLY | O_APPEND, 0)) < 0) {
 #else

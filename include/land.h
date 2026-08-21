@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Thomas Ruschak, 1992
  *     Ken Stevens, 1995
  *     Steve McClure, 1998
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2020
  */
 
 #ifndef LAND_H
@@ -41,7 +41,6 @@
 #include "retreat.h"
 #include "types.h"
 
-#define LND_TYPE_MAX	30
 #define LAND_MINEFF	10
 #define LAND_MINFIREEFF 40	/* arty must be this effic to fire */
 
@@ -125,7 +124,8 @@ struct lchrstr {
 #define putland(n, p) ef_write(EF_LAND, (n), (p))
 #define getlandp(n) ((struct lndstr *)ef_ptr(EF_LAND, (n)))
 
-extern struct lchrstr lchr[LND_TYPE_MAX + 2];
+#define LCHR_SZ 128
+extern struct lchrstr lchr[LCHR_SZ];
 
 enum {
     LND_AIROPS_EFF = 50		/* min. efficiency for air ops */

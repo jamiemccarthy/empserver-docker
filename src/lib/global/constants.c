@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Ken Stevens, 1995
  *     Steve McClure, 1996
- *     Markus Armbruster, 2004-2014
+ *     Markus Armbruster, 2004-2020
  */
 
 #include <config.h>
@@ -41,7 +41,11 @@ char *privname = "Deity forgot to edit econfig";
 /* E-mail of the deity */
 char *privlog = "careless@invalid";
 /* Divine hosts and networks */
-char *privip = "127.0.0.1 ::1";
+char *privip = "127.0.0.1 ::1"
+#ifndef HAVE_WORKING_IN6_IS_ADDR_V4MAPPED
+    " ::ffff:127.0.0.1"		/* See sockaddr_ntop() */
+#endif
+    ;
 
 char *post_crash_dump_hook = "";
 

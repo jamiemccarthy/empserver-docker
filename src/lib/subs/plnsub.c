@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Ken Stevens, 1995
  *     Steve McClure, 1998-2000
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -714,13 +714,6 @@ pln_equip(struct plist *plp, struct ichrstr *ip, char mission)
     case 'e':		/* escort */
 	load = 0;
 	break;
-    case 'i':		/* missile interception */
-	if (CANT_HAPPEN(!(pcp->pl_flags & P_M)
-			|| !(pcp->pl_flags & (P_N | P_O))))
-	    break;
-	if (load)
-	    itype = I_SHELL;
-	break;
     default:
 	CANT_REACH();
 	load = 0;
@@ -1052,7 +1045,7 @@ pln_damage(struct plnstr *pp, char type, char *noisy)
 	aim = 100 - aim;
     }
 
-    len = snprintf(buf, sizeof(buf), "%s", noisy);
+    len = noisy ? snprintf(buf, sizeof(buf), "%s", noisy) : 0;
     while (i--) {
 	if (noisy) {
 	    if (len > 75) {

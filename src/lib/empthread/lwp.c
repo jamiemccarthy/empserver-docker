@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Sasha Mikheev
- *     Markus Armbruster, 2006-2009
+ *     Markus Armbruster, 2006-2020
  */
 
 #include <config.h>
@@ -42,22 +42,15 @@
 /* Flags that were passed to empth_init() */
 static int empth_flags;
 
-
 int
 empth_init(void **ctx, int flags)
 {
-    sigset_t set;
-
+    static int sig[] = { SIGHUP, SIGINT, SIGTERM, 0 };
     empth_flags = flags;
     empth_init_signals();
-    sigemptyset(&set);
-    sigaddset(&set, SIGHUP);
-    sigaddset(&set, SIGINT);
-    sigaddset(&set, SIGTERM);
-    lwpInitSystem(1, ctx, flags, &set);
+    lwpInitSystem(1, ctx, flags, sig);
     return 0;
 }
-
 
 empth_t *
 empth_create(void (*entry)(void *), int size, int flags,
@@ -124,18 +117,13 @@ empth_sleep(time_t until)
 int
 empth_wait_for_signal(void)
 {
-    sigset_t set;
-    int sig, err;
+    int sig;
     time_t now;
 
     ef_make_stale();
-    sigemptyset(&set);
-    sigaddset(&set, SIGHUP);
-    sigaddset(&set, SIGINT);
-    sigaddset(&set, SIGTERM);
     for (;;) {
-	err = lwpSigWait(&set, &sig);
-	if (CANT_HAPPEN(err)) {
+	sig = lwpSigWait();
+	if (CANT_HAPPEN(sig < 0)) {
 	    time(&now);
 	    lwpSleepUntil(now + 60);
 	    continue;

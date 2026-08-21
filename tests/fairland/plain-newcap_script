@@ -1,0 +1,11 @@
+add 1 1 1 p
+newcap 1 27,1
+add 2 2 2 p
+newcap 2 8,14
+add 3 3 3 p
+newcap 3 4,28
+add 4 4 4 p
+newcap 4 50,6
+add 5 5 5 p
+newcap 5 43,21
+add 6 visitor visitor v

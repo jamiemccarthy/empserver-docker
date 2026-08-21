@@ -283,7 +283,8 @@ normalize()
 
 cmp_out1()
 {
-    local i=$1 exp="${2-$testdir/${1##*/}}"
+    local i=$1 master="${2-$testdir/${1##*/}}"
+    local exp="$master"
     local act="sandbox/$i"
     local nrm="sandbox/normalized-${i##*/}"
 
@@ -298,8 +299,6 @@ cmp_out1()
 	    [ ! -e "$act" ] && return
 	    exp=/dev/null
 	    ;;
-	    *.status)   exp=sandbox/ok.status; echo 0 >sandbox/ok.status ;;
-	    *)		exp=/dev/null ;;
 	esac
     fi
 
@@ -310,7 +309,7 @@ cmp_out1()
     elif [ "$EMPIRE_CHECK_ACCEPT" ]
     then
 	echo "$i CHANGED"
-	cp "$nrm" "$exp"
+	cp "$nrm" "$master"
     else
 	failed=y
 	echo "$i FAIL"

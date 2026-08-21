@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ player_main(struct player *p)
     player = p;
     time(&player->curup);
     update_timeused_login(player->curup);
-    show_motd();
+    c_motd();
     if (running_test_suite)
 	pr("\n"
 	   "***          Server configured for testing          ***\n"
@@ -229,7 +229,7 @@ make_stale_if_command_arg(char *arg)
  * We'll wait until 1.2 I guess.
  */
 int
-execute(void)
+c_execute(void)
 {
     char buf[1024];		/* UTF-8 */
     int failed;
@@ -275,14 +275,14 @@ execute(void)
 }
 
 int
-show_motd(void)
+c_motd(void)
 {
     show_first_tel(motdfil);
     return RET_OK;
 }
 
 int
-quit(void)
+c_quit(void)
 {
     io_set_eof(player->iop);
     return RET_OK;

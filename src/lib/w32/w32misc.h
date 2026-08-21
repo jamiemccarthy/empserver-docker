@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Ron Koenderink, 2007
- *     Markus Armbruster, 2007-2013
+ *     Markus Armbruster, 2007-2021
  */
 
 /*
@@ -41,28 +41,14 @@
 
 #include <stddef.h>
 
-#ifdef _MSC_VER
-/* integral mismatch, due to misuse of sector short */
-#pragma warning (disable : 4761 )
-
 /* strings.h */
+#ifdef _MSC_VER
 #define strncasecmp(s1, s2, s3) _strnicmp((s1), (s2), (s3))
 #endif /* _MSC_VER */
-
-/* errno.h */
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK EAGAIN
-#endif
 
 /* fcntl.h */
 #ifdef _MSC_VER
 #define O_ACCMODE (_O_RDONLY|_O_WRONLY|_O_RDWR)
-#endif
-
-/* stdio.h */
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
 #endif
 
 /* time.h */

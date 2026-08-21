@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  *  work.c: Implementation of the work command
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2009-2016
+ *     Markus Armbruster, 2009-2021
  */
 
 #include <config.h>
@@ -39,7 +39,7 @@
 #include "update.h"
 
 int
-work(void)
+c_work(void)
 {
     int nunits;
     struct nstr_item ni;
@@ -67,6 +67,11 @@ work(void)
 	    continue;
 	if (!(lchr[(int)land.lnd_type].l_flags & L_ENGINEER))
 	    continue;
+	if (land.lnd_ship >= 0 || land.lnd_land >= 0) {
+	    pr("%s is on a %s\n",
+	       prland(&land), land.lnd_ship >= 0 ? "ship" : "land unit");
+	    continue;
+	}
 	if (land.lnd_mobil <= 0) {
 	    pr("%s has no mobility!\n", prland(&land));
 	    continue;

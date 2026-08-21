@@ -69,15 +69,19 @@ sub next_id {
 
 sub edit_int1 {
     my ($ef, $id, $key, $lob, $upb) = @_;
+    edit($ef, $id, $key, $lob + 1)
+	if $lob + 1 < $upb;
     edit($ef, $id, $key, $lob);
     $id = next_id($ef, $id);
     edit($ef, $id, $key, $lob - 1)
-	if ($lob > $INT_MIN);
+	if $lob > $INT_MIN;
     $id = next_id($ef, $id);
+    edit($ef, $id, $key, $upb - 1)
+	if $upb - 1 > $lob + 1;
     edit($ef, $id, $key, $upb);
     $id = next_id($ef, $id);
     edit($ef, $id, $key, $upb + 1)
-	if ($upb < $INT_MAX);
+	if $upb < $INT_MAX;
 }
 
 sub edit_int {
@@ -212,6 +216,9 @@ give('2,6', 'l', $INT_MIN);
 give('4:8,6', 'c', 1);
 give('6,6', 'c', $INT_MAX);
 give('8,6', 'c', -1);
+for my $key (split(//, 'cmsgpidbfolhur')) {
+    give('10,6', $key, 1);
+}
 
 # swapsector
 swaps('-2,2', '2,-2');
@@ -252,15 +259,20 @@ edit_int('ship', 2, (
 
 # plane: type
 edit('plane', 6, 'T', 'mb', 'O', 1, 'T', 'mb', 'T', 'hb', 'T', 'mb');
-edit('plane', 7, 'r', 255, 'T', 'hb', 'T', 'mb');
-edit('plane', 8, 'T', 'hb', 'r', 255, 'T', 'f1');
+edit('plane', 7, 'O', 1, 'r', 255, 'T', 'hb', 'T', 'mb');
+edit('plane', 8, 'O', 1, 'T', 'hb', 'r', 255, 'T', 'f1');
+edit('plane', 12, 'T', 'ssm', 'O', 1, 'U', 13, 'U', 14, 'U', 15);
 
-# plane: effic mobil range tech
+# plane: effic mobil range tech harden
 edit_int('plane', 2, (
     ['e', 0, 100],
     ['m', -127, 127],
     ['r', 0, 9],
     ['t', 50, 32767],
+    ['F', 0, 0],
+));
+edit_int('plane', 12, (
+    ['F', 0, 127],
 ));
 
 # land: type
@@ -304,6 +316,13 @@ for my $ef ('ship', 'land') {
     edit($ef, 3, 'W', 513, 'W', 1030, 'W', 2);
 }
 
+# items
+for my $ef ('ship', 'land') {
+    for my $key (split(//, 'cmsgpidBfolhur')) {
+	edit($ef, 2, $key, 1);
+    }
+}
+
 # plane: flags
 # Take care to have only valid bits set in final state
 edit('plane', 2, 'f', 4);
@@ -323,7 +342,11 @@ unit_carrier('nuke', 'p');
 edit('plane', 4, 'l', '5,1');
 
 # special case: load teleports to carrier
+# (previous loads already zapped fortification)
 edit('land', 4, 'S', 2);
+
+# special case: load teleports to carrier and zaps fortification
+edit('plane', 14, 's', 4);
 
 # interactive edit
 iedit('ship', 0, 'M 2', 'm 1', 'f 1');

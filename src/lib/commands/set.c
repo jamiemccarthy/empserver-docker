@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@
  *     Dave Pare, 1986
  *     Pat Loney, 1992
  *     Steve McClure, 1996
+ *     Markus Armbruster, 2004-2018
  */
 
 #include <config.h>
@@ -46,7 +47,7 @@
  * format: set <type> <SHIP/NUKE> <PRICE>
  */
 int
-set(void)
+c_set(void)
 {
     static int ef_saleable[] = { EF_SHIP, EF_PLANE, EF_LAND, EF_NUKE, EF_BAD };
     char *p;
@@ -101,8 +102,11 @@ set(void)
 	freeslot = -1;
 	snxtitem_all(&ni_trade, EF_TRADE);
 	while (nxtitem(&ni_trade, &trade)) {
-	    if (trade.trd_owner == 0)
-		freeslot = ni_trade.cur;
+	    if (!trade.trd_owner) {
+		if (freeslot < 0)
+		    freeslot = ni_trade.cur;
+		continue;
+	    }
 	    if (trade.trd_unitid == ni.cur && trade.trd_type == type) {
 		foundslot = ni_trade.cur;
 		break;

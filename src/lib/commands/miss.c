@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Thomas Ruschak, 1992
  *     Steve McClure, 2000
- *     Markus Armbruster, 2005-2016
+ *     Markus Armbruster, 2005-2021
  */
 
 #include <config.h>
@@ -45,7 +45,7 @@ static int show_mission(struct nstr_item *);
  *  mission <type> <planes/ships/units> <mission type> <op sector> [<radius>]
  */
 int
-mission(void)
+c_mission(void)
 {
     static int ef_with_missions[] = { EF_SHIP, EF_LAND, EF_PLANE, EF_BAD };
     char *p;
@@ -211,7 +211,7 @@ mission(void)
 
 	    pcp = &plchr[(int)gp->type];
 	    if (!(pcp->pl_flags & P_F)) {
-		pr("Only planes with the intercept abilities can perform air defense.\n"
+		pr("Only planes with the intercept ability can perform air defense.\n"
 		   "%s #%d is ineligible\n",
 		   pcp->pl_name, gp->uid);
 		continue;
@@ -222,6 +222,12 @@ mission(void)
 	    struct plchrstr *pcp;
 
 	    pcp = &plchr[(int)gp->type];
+	    if (pcp->pl_flags & P_M) {
+		pr("Missiles can't escort.\n"
+		   "%s #%d is ineligible\n",
+		   pcp->pl_name, gp->uid);
+		continue;
+	    }
 	    if (!(pcp->pl_flags & P_ESC) && !(pcp->pl_flags & P_F)) {
 		pr("Only planes with the escort or intercept abilities can escort.\n"
 		   "%s #%d is ineligible\n",
@@ -235,7 +241,7 @@ mission(void)
 	    struct plchrstr *pcp;
 
 	    pcp = &plchr[(int)gp->type];
-	    if (!(pcp->pl_flags & P_T)) {
+	    if ((pcp->pl_flags & (P_T | P_MAR)) != P_T) {
 		pr("Only planes with the tactical ability can support.\n"
 		   "%s #%d is ineligible\n",
 		   pcp->pl_name, gp->uid);

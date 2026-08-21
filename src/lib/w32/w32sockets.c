@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -231,43 +231,6 @@ w32_socket(int domain, int type, int protocol)
     }
     return W32_SOCKET_TO_FD(sock);
 }
-
-#ifdef HAVE_GETADDRINFO
-const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t len)
-{
-    struct sockaddr *sa;
-    struct sockaddr_in sin;
-    struct sockaddr_in6 sin6;
-    size_t salen;
-
-    if (af == AF_INET) {
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = af;
-	memcpy(&sin.sin_addr, src, sizeof(sin.sin_addr));
-	sa = (struct sockaddr *)&sin;
-	salen = sizeof(sin);
-    } else if (af == AF_INET6) {
-	memset(&sin6, 0, sizeof(sin6));
-	sin6.sin6_family = af;
-	memcpy(&sin6.sin6_addr, src, sizeof(sin6.sin6_addr));
-	sa = (struct sockaddr *)&sin6;
-	salen = sizeof(sin6);
-    } else {
-	WSASetLastError(WSAEAFNOSUPPORT);
-	w32_set_winsock_errno();
-	return NULL;
-    }
-
-    if (getnameinfo(sa, salen, dst, len, NULL, 0, NI_NUMERICHOST)) {
-	WSASetLastError(WSAEAFNOSUPPORT);
-	w32_set_winsock_errno();
-	return NULL;
-    }
-
-    return dst;
-}
-#endif
 
 /*
  * POSIX equivalent for fcntl().

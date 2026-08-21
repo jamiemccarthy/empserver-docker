@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ static int showship(struct coast **cpp, int x, int y);
  * format: coastwatch [<SECTS>]
  */
 int
-coas(void)
+c_coastwatch(void)
 {
     struct sctstr sect;
     struct nstr_sect nstr;

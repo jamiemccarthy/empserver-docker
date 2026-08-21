@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
  *     Thomas Ruschak, 1992
  *     Ken Stevens, 1995
  *     Steve McClure, 2000
- *     Markus Armbruster, 2004-2015
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -47,7 +47,7 @@ static void fire_dchrg(struct shpstr *, struct shpstr *, int);
 static int fire_torp(struct shpstr *, struct shpstr *, int);
 
 int
-torp(void)
+c_torpedo(void)
 {
     natid vshipown;
     int range;
@@ -191,7 +191,7 @@ torp(void)
 	    if (vship.shp_effic < SHIP_MINEFF)
 		pr("%s sunk!\n", prsub(&vship));
 	    if (vship.shp_rflags & RET_TORPED)
-		retreat_ship(&vship, vshipown, 't');
+		retreat_ship(&vship, vshipown);
 	    putship(vship.shp_uid, &vship);
 	} else {
 	    pr("Missed\n");

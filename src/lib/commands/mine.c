@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@
  * format: mine <SHIPS> <NUMBER MINES>
  */
 int
-mine(void)
+c_mine(void)
 {
     struct shpstr ship;
     struct sctstr sect;
@@ -88,7 +88,7 @@ mine(void)
  * format: landmine <UNITS> <NUMBER MINES>
  */
 int
-landmine(void)
+c_lmine(void)
 {
     struct lndstr land;
     struct sctstr sect;

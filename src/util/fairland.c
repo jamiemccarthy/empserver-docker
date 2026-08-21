@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,171 +29,326 @@
  *  Known contributors to this file:
  *     Ken Stevens, 1995
  *     Steve McClure, 1998
- *     Markus Armbruster, 2004-2013
+ *     Markus Armbruster, 2004-2020
+ */
+
+/*
+ * How fairland works
+ *
+ * 1. Place capitals
+ *
+ * Place the capitals on the torus in such a way so as to maximize
+ * their distances from one another.  This uses the perturbation
+ * technique of calculus of variations.
+ *
+ * 2. Grow start islands ("continents")
+ *
+ * For all continents, add the first sector at the capital's location,
+ * and the second right to it.  These are the capital sectors.  Then
+ * add one sector to each continent in turn, until they have the
+ * specified size.
+ *
+ * Growth uses weighted random sampling to pick one sector from the
+ * set of adjacent sea sectors that aren't too close to another
+ * continent.  Growth operates in spiking mode with a chance given by
+ * the spike percentage.  When "spiking", a sector's weight increases
+ * with number of adjacent sea sectors.  This directs the growth away
+ * from land, resulting in spikes.  When not spiking, the weight
+ * increases with the number of adjacent land sectors.  This makes the
+ * island more rounded.
+ *
+ * If growing fails due to lack of room, start over.  If it fails too
+ * many times, give up and terminate unsuccessfully.
+ *
+ * 3. Place and grow additional islands
+ *
+ * Each continent has a "sphere of influence": the set of sectors
+ * closer to it than to any other continent.  Each island is entirely
+ * in one such sphere, and each sphere contains the same number of
+ * islands with the same sizes.
+ *
+ * First, split the specified number of island sectors per continent
+ * randomly into the island sizes.  Sort by size so that larger
+ * islands are grown before smaller ones, to give the large ones the
+ * best chance to grow to their planned size.
+ *
+ * Then place one island's first sector into each sphere, using
+ * weighted random sampling with weights favoring sectors away from
+ * land and other spheres.  Add one sector to each island in turn,
+ * until they have the intended size.  Repeat until the specified
+ * number of islands has been grown.
+ *
+ * If placement fails due to lack of room, start over, just like for
+ * continents.
+ *
+ * Growing works as for continents, except the minimum distance for
+ * additional islands applies, and growing simply stops when any of
+ * the islands being grown lacks the room to grow further.  The number
+ * of sectors not grown carries over to the next island size.
+ *
+ * 4. Compute elevation
+ *
+ * First, use a simple random hill algorithm to assign raw elevations:
+ * initialize elevation to zero, then randomly raise circular hills on
+ * land / lower circular depressions at sea.  Their size and height
+ * depends on the distance to the coast.
+ *
+ * Then, elevate islands one after the other.
+ *
+ * Set the capitals' elevation to a fixed value.  Process the
+ * remaining sectors in order of increasing raw elevation, first
+ * non-mountains, then mountains.  Non-mountain elevation starts at 1,
+ * and increases linearly to just below "high" elevation.  Mountain
+ * elevation starts at "high" elevation, and increases linearly.
+ *
+ * This gives islands of the same size the same set of elevations.
+ * Larger islands get more and taller mountains.
+ *
+ * Finally, elevate sea: normalize the raw elevations to [-127:-1].
+ *
+ * 5. Set resources
+ *
+ * Sector resources are simple functions of elevation.  You can alter
+ * iron_conf[], gold_conf[], fert_conf[], oil_conf[], and uran_conf[]
+ * to customize them.
  */
 
 #include <config.h>
 
-/* define ORE 1 to add resources, define ORE 0 if you want to use another
-   program to add the resources */
-static int ORE = 1;
-static int quiet = 0;
-
-/* If you don't specify these command line arguments, then these are the
-   defaults */
-#define DEFAULT_SPIKE 10
-#define DEFAULT_MOUNTAIN 0
-#define DEFAULT_CONTDIST 2
-#define DEFAULT_ISLDIST 1
-
-/* The following five numbers refer to elevation under which (in the case of
-   fertility or oil) or over which (in the case of iron, gold, and uranium)
-   sectors with that elevation will contain that resource.  Elevation ranges
-   from 0 to 100 */
-
-/* raise FERT_MAX for more fertility */
-#define FERT_MAX   56
-
-/* raise OIL_MAX for more oil */
-#define OIL_MAX	   33
-
-/* lower IRON_MIN for more iron */
-#define IRON_MIN   22
-
-/* lower GOLD_MIN for more gold */
-#define GOLD_MIN   36
-
-/* lower URAN_MIN for more uranium */
-#define URAN_MIN   56
-
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
 #include "chance.h"
 #include "optlist.h"
+#include "path.h"
 #include "prototypes.h"
 #include "sect.h"
 #include "version.h"
 #include "xy.h"
 
-/* do not change these 4 defines */
+/*
+ * Number of retries when growing land fails
+ */
+#define NUMTRIES 10
+
+/* do not change these defines */
 #define LANDMIN		1	/* plate altitude for normal land */
-#define HILLMIN		34	/* plate altitude for hills */
 #define PLATMIN		36	/* plate altitude for plateau */
 #define HIGHMIN		98	/* plate altitude for mountains */
 
-static void qprint(const char * const fmt, ...)
-    ATTRIBUTE((format (printf, 1, 2)));
+/*
+ * Resource configuration
 
-#define DEFAULT_OUTFILE_NAME "newcap_script"
-static const char *outfile = DEFAULT_OUTFILE_NAME;
-/* mark the continents with a * so you can tell them
-   from the islands 1 = mark, 0 = don't mark. */
-static int AIRPORT_MARKER = 0;
+ * Resources are determined by elevation.  The map from elevation to
+ * resource is defined as a linear interpolation of resource data
+ * points (elev, res) defined in the tables below.  Elevations range
+ * from -127 to 127, and resource values from 0 to 100.
+ */
 
+struct resource_point {
+    int elev, res;
+};
+
+struct resource_point iron_conf[] = {
+    { -127, 0 },
+    { 21, 0 },
+    { 85, 100 },
+    { HIGHMIN - 1, 100 },
+    { HIGHMIN , 0 },
+    { 127, 0 } };
+
+struct resource_point gold_conf[] = {
+    { -127, 0 },
+    { 35, 0 },
+    { HIGHMIN - 1, 80 },
+    { HIGHMIN, 80 },
+    { 127, 85 } };
+
+struct resource_point fert_conf[] = {
+    { -127, 100 },
+    { -59, 100 },
+    { LANDMIN - 1, 41 },
+    { LANDMIN, 100 },
+    { 10, 100 },
+    { 56, 0 },
+    { 127, 0 } };
+
+struct resource_point oil_conf[] = {
+    { -127, 100 },
+    { -49, 100 },
+    { LANDMIN - 1, 2 },
+    { LANDMIN, 100 },
+    { 6, 100 },
+    { 34, 0 },
+    { 127, 0 } };
+
+struct resource_point uran_conf[] = {
+    { -127, 0 },
+    { 55, 0 },
+    { 90, 100 },
+    { 97, 100 },
+    { 98, 0 },
+    { 127, 0 } };
+
+/*
+ * Program arguments and options
+ */
+static char *program_name;
+static int nc, sc;		/* number and size of continents */
+static int ni, is;		/* number and size of islands */
+#define DEFAULT_SPIKE 10
+static int sp = DEFAULT_SPIKE;	/* spike percentage */
+#define DEFAULT_MOUNTAIN 0
+static int pm = DEFAULT_MOUNTAIN; /* mountain percentage */
+#define DEFAULT_CONTDIST 2
+static int di = DEFAULT_CONTDIST; /* min. distance between continents */
+#define DEFAULT_ISLDIST 1
+static int id = DEFAULT_ISLDIST;  /* ... continents and islands */
 /* don't let the islands crash into each other.
    1 = don't merge, 0 = merge. */
 static int DISTINCT_ISLANDS = 1;
+static int quiet;
+#define DEFAULT_OUTFILE_NAME "newcap_script"
+static const char *outfile = DEFAULT_OUTFILE_NAME;
 
-static char *program_name;
-
-#define STABLE_CYCLE 4		/* stability required for perterbed capitals */
-#define INFINITY	999	/* a number which means "BIG" */
-
-/* these defines prevent infinite loops:
-*/
-
-#define COAST_SEARCH_MAX 200	/* how many times do we look for a coast sector
-				   when growing continents and islands */
+#define STABLE_CYCLE 4		/* stability required for perturbed capitals */
 #define DRIFT_BEFORE_CHECK ((WORLD_X + WORLD_Y)/2)
 #define DRIFT_MAX ((WORLD_X + WORLD_Y)*2)
-#define MOUNTAIN_SEARCH_MAX 1000	/* how long do we try to place mountains */
-
-/* handy macros:
-*/
 
 #define new_x(newx) (((newx) + WORLD_X) % WORLD_X)
 #define new_y(newy) (((newy) + WORLD_Y) % WORLD_Y)
 
-static int secs;		/* number of sectors grown */
-static int ctot;		/* total number of continents and islands grown */
-static int *isecs;		/* array of how large each island is */
+struct xy {
+    coord x, y;
+};
 
-static int nc, sc, di, sp, pm, ni, is, id; /* the 8 args to this program */
-static int *capx, *capy;	/* location of the nc capitals */
-static int *mc, mcc;		/* array and counter used for stability
-				   check when perturbing */
-static int spike;		/* are we spiking? */
-static int mind;		/* the final distance between capitals that
-				   we achieved */
-static int dirx[] = { -2, -1, 1, 2, 1, -1 }; /* gyujnb */
-static int diry[] = { 0, -1, -1, 0, 1, 1 };
+/*
+ * Capital locations
+ * The i-th capital is at cap[i].
+ */
+static struct xy *cap;
 
-static int **own;		/* owner of the sector.  -1 means water */
-static int **elev;		/* elevation of the sectors */
-static int **sectx, **secty;	/* the sectors for each continent */
-static int **sectc;		/* which sectors are on the coast? */
-static int *vector;		/* used for measuring distances */
-static int *weight;		/* used for placing mountains */
-static int *dsea, *dmoun;	/* the dist to the ocean and mountain */
-static int fl_status;		/* is anything wrong? */
-#define STATUS_NO_ROOM 1	/* there was no room to grow */
-#define NUMTRIES 10		/* keep trying to grow this many times */
+/*
+ * Island sizes
+ * isecs[i] is the size of the i-th island.
+ */
+static int *isecs;
+
+/*
+ * Island sectors
+ * The i-th island's j-th sector is at sect[i][j].
+ */
+struct xy **sect;
+
+/*
+ * Island at x, y
+ * own[XYOFFSET(x, y)] is x,y's island number, -1 if water.
+ */
+static short *own;
+
+/*
+ * Adjacent land sectors
+ * adj_land[XYOFFSET(x, y)] bit d is set exactly when the sector next
+ * to x, y in direction d is land.
+ */
+static unsigned char *adj_land;
+
+/*
+ * Elevation at x,y
+ * elev[XYOFFSET(x, y)] is x,y's elevation.
+ */
+static short *elev;
+
+/*
+ * Exclusive zones
+ * Each island is surrounded by an exclusive zone where only it may
+ * grow.  The width of the zone depends on minimum distances.
+ * While growing continents, it is @di sectors wide.
+ * While growing additional islands, it is @id sectors wide.
+ * DISTINCT_ISLANDS nullifies the exclusive zone then.
+ * xzone[XYOFFSET(x, y)] is -1 when the sector is in no exclusive
+ * zone, a (non-negative) island number when it is in that island's
+ * exclusive zone and no other, and -2 when it is in multiple
+ * exclusive zones.
+ */
+static short *xzone;
+
+/*
+ * Set of sectors seen already
+ * Increment @cur_seen to empty the set of sectors seen, set
+ * seen[XYOFFSET(x, y)] to @cur_seen to add x,y to the set.
+ */
+static unsigned *seen;
+static unsigned cur_seen;
+
+/*
+ * Closest continent and "distance"
+ * closest[XYOFFSET(x, y)] is the closest continent's number.
+ * distance[] is complicated; see init_spheres_of_influence() and
+ * init_distance_to_coast().
+ */
+static natid *closest;
+static unsigned short *distance;
+
+/*
+ * Queue for breadth-first search
+ */
+static int *bfs_queue;
+static int bfs_queue_head, bfs_queue_tail;
 
 static const char *numletter =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+static void print_vars(void);
+static void qprint(const char * const fmt, ...)
+    ATTRIBUTE((format (printf, 1, 2)));
 static void help(char *);
 static void usage(void);
 static void parse_args(int argc, char *argv[]);
 static void allocate_memory(void);
 static void init(void);
 static int drift(void);
-static void grow_continents(void);
+static int stable(int);
+static void drift_capital(int);
+static int grow_continents(void);
+static int grow_islands(void);
 static void create_elevations(void);
+static void elevate_prep(void);
+static void elevate_land(void);
+static void elevate_sea(void);
 static void write_sects(void);
 static void output(void);
 static int write_newcap_script(void);
-static int stable(void);
-static void elevate_land(void);
-static void elevate_sea(void);
-static int map_symbol(int x, int y);
-static void set_coastal_flags(void);
 
-static void print_vars(void);
-static void fl_move(int);
-static void grow_islands(void);
+/* Debugging aids: */
+void print_own_map(void);
+void print_xzone_map(void);
+void print_closest_map(void);
+void print_distance_map(void);
+void print_elev_map(void);
 
-/****************************************************************************
-  MAIN
-****************************************************************************/
 
 int
 main(int argc, char *argv[])
 {
     int opt;
     char *config_file = NULL;
-    int i = 0;
+    int try, done;
     unsigned rnd_seed = 0;
     int seed_set = 0;
 
     program_name = argv[0];
 
-    while ((opt = getopt(argc, argv, "ae:hioqR:s:v")) != EOF) {
+    while ((opt = getopt(argc, argv, "e:hiqR:s:v")) != EOF) {
 	switch (opt) {
-	case 'a':
-	    AIRPORT_MARKER = 1;
-	    break;
 	case 'e':
 	    config_file = optarg;
 	    break;
 	case 'i':
 	    DISTINCT_ISLANDS = 0;
-	    break;
-	case 'o':
-	    ORE = 0;
 	    break;
 	case 'q':
 	    quiet = 1;
@@ -216,7 +371,6 @@ main(int argc, char *argv[])
 	    exit(1);
 	}
     }
-    parse_args(argc - optind, argv + optind);
 
     if (!seed_set)
 	rnd_seed = pick_seed();
@@ -226,51 +380,53 @@ main(int argc, char *argv[])
 	exit(1);
     empfile_fixup();
 
+    parse_args(argc - optind, argv + optind);
+
     allocate_memory();
     print_vars();
 
     qprint("\n        #*# ...fairland rips open a rift in the datumplane... #*#\n\n");
     qprint("seed is %u\n", rnd_seed);
+    try = 0;
     do {
 	init();
-	if (i)
-	    qprint("\ntry #%d (out of %d)...\n", i + 1, NUMTRIES);
+	if (try)
+	    qprint("\ntry #%d (out of %d)...\n", try + 1, NUMTRIES);
 	qprint("placing capitals...\n");
 	if (!drift())
-	    qprint("fairland: unstable drift -- try increasing DRIFT_MAX\n");
+	    qprint("unstable drift\n");
 	qprint("growing continents...\n");
-	grow_continents();
-    } while (fl_status && ++i < NUMTRIES);
-    if (fl_status) {
-	fputs("ERROR: World not large enough to hold continents\n",
-	      stderr);
+	done = grow_continents();
+	if (!done)
+	    continue;
+	qprint("growing islands:");
+	done = grow_islands();
+    } while (!done && ++try < NUMTRIES);
+    if (!done) {
+	fprintf(stderr, "%s: world not large enough for this much land\n",
+		program_name);
 	exit(1);
     }
-    qprint("growing islands:");
-    grow_islands();
-    qprint("\nelevating land...\n");
+    qprint("elevating land...\n");
     create_elevations();
-    qprint("designating sectors...\n");
-    if (ORE)
-	qprint("adding resources...\n");
-    write_newcap_script();
 
+    qprint("writing to sectors file...\n");
+    if (!write_newcap_script())
+	exit(1);
     if (chdir(gamedir)) {
-	fprintf(stderr, "Can't chdir to %s (%s)\n", gamedir, strerror(errno));
-	exit(EXIT_FAILURE);
+	fprintf(stderr, "%s: can't chdir to %s (%s)\n",
+		program_name, gamedir, strerror(errno));
+	exit(1);
     }
     if (!ef_open(EF_SECTOR, EFF_MEM | EFF_NOTIME))
 	exit(1);
     write_sects();
-    qprint("writing to sectors file...\n");
     if (!ef_close(EF_SECTOR))
 	exit(1);
 
     output();
     qprint("\n\nA script for adding all the countries can be found in \"%s\".\n",
 	   outfile);
-    if (!ORE)
-	qprint("\t*** Resources have not been added ***\n");
     exit(0);
 }
 
@@ -292,18 +448,17 @@ print_vars(void)
     printf("World dimensions: %dx%d\n", WORLD_X, WORLD_Y);
 }
 
-static int
-my_sqrt(int n)
+static void
+qprint(const char *const fmt, ...)
 {
-    int i;
+    va_list ap;
 
-    for (i = 1; i * i < n * 10000; ++i) ;
-    return (i + 50) / 100;
+    if (!quiet) {
+	va_start(ap, fmt);
+	vfprintf(stdout, fmt, ap);
+	va_end(ap);
+    }
 }
-
-/****************************************************************************
-  PARSE COMMAND LINE ARGUMENTS
-****************************************************************************/
 
 static void
 help(char *complaint)
@@ -317,11 +472,9 @@ static void
 usage(void)
 {
     printf("Usage: %s [OPTION]... NC SC [NI] [IS] [SP] [PM] [DI] [ID]\n"
-	   "  -a              airport marker for continents\n"
 	   "  -e CONFIG-FILE  configuration file\n"
 	   "                  (default %s)\n"
 	   "  -i              islands may merge\n"
-	   "  -o              don't set resources\n"
 	   "  -q              quiet\n"
 	   "  -R SEED         seed for random number generator\n"
 	   "  -s SCRIPT       name of script to create (default %s)\n"
@@ -342,6 +495,8 @@ usage(void)
 static void
 parse_args(int argc, char *argv[])
 {
+    int dist_max = mapdist(0, 0, WORLD_X / 2, WORLD_Y / 2);
+
     if (argc < 2) {
 	help("missing arguments");
 	exit(1);
@@ -352,160 +507,146 @@ parse_args(int argc, char *argv[])
     }
     nc = atoi(argv[0]);
     if (nc < 1) {
-	puts("fairland: error -- number of continents must be > 0");
+	fprintf(stderr, "%s: number of continents must be > 0\n",
+		program_name);
 	exit(1);
     }
 
     sc = atoi(argv[1]);
-    if (sc < 1) {
-	puts("fairland: error -- size of continents must be > 0");
+    if (sc < 2) {
+	fprintf(stderr, "%s: size of continents must be > 1\n",
+		program_name);
 	exit(1);
     }
+
+    ni = nc;
+    is = sc / 2;
 
     if (argc > 2)
 	ni = atoi(argv[2]);
-    else
-	ni = nc;
+    if (ni < 0) {
+	fprintf(stderr, "%s: number of islands must be >= 0\n",
+		program_name);
+	exit(1);
+    }
+    if (ni % nc) {
+	fprintf(stderr, "%s: number of islands must be a multiple of"
+		" the number of continents\n",
+		program_name);
+	exit(1);
+    }
 
     if (argc > 3)
 	is = atoi(argv[3]);
-    else
-	is = sc / 2;
-    if (is < 1)
-	is = 1;
+    if (is < 1) {
+	fprintf(stderr, "%s: size of islands must be > 0\n",
+		program_name);
+	exit(1);
+    }
 
     if (argc > 4)
 	sp = atoi(argv[4]);
-    else
-	sp = DEFAULT_SPIKE;
-    sp = LIMIT_TO(sp, 0, 100);
+    if (sp < 0 || sp > 100) {
+	fprintf(stderr,
+		"%s: spike percentage must be between 0 and 100\n",
+		program_name);
+	exit(1);
+    }
 
     if (argc > 5)
 	pm = atoi(argv[5]);
-    else
-	pm = DEFAULT_MOUNTAIN;
-    if (pm < 0)
-	pm = 0;
+    if (pm < 0 || pm > 100) {
+	fprintf(stderr,
+		"%s: mountain percentage must be between 0 and 100\n",
+		program_name);
+	exit(1);
+    }
 
     if (argc > 6)
 	di = atoi(argv[6]);
-    else
-	di = DEFAULT_CONTDIST;
-
     if (di < 0) {
-	puts("fairland: error -- distance between continents must be >= 0");
+	fprintf(stderr, "%s: distance between continents must be >= 0\n",
+		program_name);
 	exit(1);
     }
-    if (di > WORLD_X / 2 || di > WORLD_Y / 2) {
-	puts("fairland: error -- distance between continents too large");
+    if (di > dist_max) {
+	fprintf(stderr, "%s: distance between continents too large\n",
+		program_name);
 	exit(1);
     }
 
     if (argc > 7)
 	id = atoi(argv[7]);
-    else
-	id = DEFAULT_ISLDIST;
     if (id < 0) {
-	puts("fairland: error -- distance from islands to continents must be >= 0");
+	fprintf(stderr,
+		"%s: distance from islands to continents must be >= 0\n",
+		program_name);
 	exit(1);
     }
-    if (id > WORLD_X || id > WORLD_Y) {
-	puts("fairland: error -- distance from islands to continents too large");
+    if (id > dist_max) {
+	fprintf(stderr,
+		"%s: distance from islands to continents too large\n",
+		program_name);
 	exit(1);
-    }
-    if (nc * sc + nc * my_sqrt(sc) * 2 * (di + 1) > WORLD_X * WORLD_Y) {
-	puts("fairland: warning -- world might be too small to fit continents.");
-	puts("arguments should satisfy:");
-	puts("nc*sc*sc + nc*sqrt(sc)*2*(di+1) < WORLD_X * WORLD_Y");
     }
 }
 
-/****************************************************************************
-  VARIABLE INITIALIZATION
-****************************************************************************/
+
+/*
+ * Variable initialization
+ */
 
 static void
 allocate_memory(void)
 {
     int i;
 
-    capx = calloc(nc, sizeof(int));
-    capy = calloc(nc, sizeof(int));
-    vector = calloc(WORLD_X + WORLD_Y, sizeof(int));
-    mc = calloc(STABLE_CYCLE, sizeof(int));
-    own = calloc(WORLD_X, sizeof(int *));
-    elev = calloc(WORLD_X, sizeof(int *));
-    for (i = 0; i < WORLD_X; ++i) {
-	own[i] = calloc(WORLD_Y, sizeof(int));
-	elev[i] = calloc(WORLD_Y, sizeof(int));
-    }
-    sectx = calloc(nc + ni, sizeof(int *));
-    secty = calloc(nc + ni, sizeof(int *));
-    sectc = calloc(nc + ni, sizeof(int *));
+    cap = malloc(nc * sizeof(*cap));
+    own = malloc(WORLD_SZ() * sizeof(*own));
+    adj_land = malloc(WORLD_SZ() * sizeof(*adj_land));
+    elev = calloc(WORLD_SZ(), sizeof(*elev));
+    xzone = malloc(WORLD_SZ() * sizeof(*xzone));
+    seen = calloc(WORLD_SZ(), sizeof(*seen));
+    closest = malloc(WORLD_SZ() * sizeof(*closest));
+    distance = malloc(WORLD_SZ() * sizeof(*distance));
+    bfs_queue = malloc(WORLD_SZ() * sizeof(*bfs_queue));
     isecs = calloc(nc + ni, sizeof(int));
-    weight = calloc(MAX(sc, is * 2), sizeof(int));
-    dsea = calloc(MAX(sc, is * 2), sizeof(int));
-    dmoun = calloc(MAX(sc, is * 2), sizeof(int));
-    for (i = 0; i < nc; ++i) {
-	sectx[i] = calloc(sc, sizeof(int));
-	secty[i] = calloc(sc, sizeof(int));
-	sectc[i] = calloc(sc, sizeof(int));
-    }
-    for (i = nc; i < nc + ni; ++i) {
-	sectx[i] = calloc(is * 2, sizeof(int));
-	secty[i] = calloc(is * 2, sizeof(int));
-	sectc[i] = calloc(is * 2, sizeof(int));
-    }
-
+    sect = malloc((nc + ni) * sizeof(*sect));
+    for (i = 0; i < nc; i++)
+	sect[i] = malloc(sc * sizeof(**sect));
+    for (i = nc; i < nc + ni; i++)
+	sect[i] = malloc(is * 2 * sizeof(**sect));
 }
 
 static void
 init(void)
 {
-    int i, j, xx = 0, yy = 0;
+    int i;
 
-    mcc = 0;
-    fl_status = 0;
-
-    for (i = 0; i < WORLD_X; ++i) {
-	for (j = 0; j < WORLD_Y; ++j) {
-	    own[i][j] = -1;
-	    elev[i][j] = -INFINITY;
-	}
-    }
-
-    for (i = 0; i < nc; ++i) {
-	if (xx >= WORLD_X) {
-	    ++yy;
-	    xx = yy % 2;
-	    if (yy == WORLD_Y) {
-		puts("fairland error: world not big enough for all the continents.\n");
-		exit(1);
-	    }
-	}
-	capx[i] = xx;
-	capy[i] = yy;
-	xx += 2;
-    }
-    for (i = 0; i < STABLE_CYCLE; ++i)
-	mc[i] = i;
+    for (i = 0; i < WORLD_SZ(); i++)
+	own[i] = -1;
+    memset(adj_land, 0, WORLD_SZ() * sizeof(*adj_land));
 }
 
-/****************************************************************************
-  DRIFT THE CAPITALS UNTIL THEY ARE AS FAR AWAY FROM EACH OTHER AS POSSIBLE
-****************************************************************************/
 
-/* How isolated is capital j?
-*/
+/*
+ * Drift the capitals until they are as far away from each other as possible
+ */
+
+/*
+ * How isolated is capital @j at @newx,@newy?
+ * Return the distance to the closest other capital.
+ */
 static int
 iso(int j, int newx, int newy)
 {
-    int i, md, d = WORLD_X + WORLD_Y;
+    int d = INT_MAX;
+    int i, md;
 
     for (i = 0; i < nc; ++i) {
 	if (i == j)
 	    continue;
-	md = mapdist(capx[i], capy[i], newx, newy);
+	md = mapdist(cap[i].x, cap[i].y, newx, newy);
 	if (md < d)
 	    d = md;
     }
@@ -513,632 +654,1011 @@ iso(int j, int newx, int newy)
     return d;
 }
 
-/* Drift all the capitals
-*/
+/*
+ * Drift the capitals
+ * Return 1 for a stable drift, 0 for an unstable one.
+ */
 static int
 drift(void)
 {
-    int i, turns;
+    int turns, i;
+
+    for (i = 0; i < nc; i++) {
+	cap[i].y = (2 * i) / WORLD_X;
+	cap[i].x = (2 * i) % WORLD_X + cap[i].y % 2;
+	if (cap[i].y >= WORLD_Y) {
+	    fprintf(stderr,
+		    "%s: world not big enough for all the continents\n",
+		    program_name);
+	    exit(1);
+	}
+    }
 
     for (turns = 0; turns < DRIFT_MAX; ++turns) {
-	if (turns > DRIFT_BEFORE_CHECK && (mind = stable()))
+	if (stable(turns))
 	    return 1;
 	for (i = 0; i < nc; ++i)
-	    fl_move(i);
+	    drift_capital(i);
     }
     return 0;
 }
 
-/* Check to see if we have stabilized--can we stop drifting the capitals?
-*/
-
+/*
+ * Has the drift stabilized?
+ * @turns is the number of turns so far.
+ */
 static int
-stable(void)
+stable(int turns)
 {
+    static int mc[STABLE_CYCLE];
     int i, isod, d = 0, stab = 1;
 
+    if (!turns) {
+	for (i = 0; i < STABLE_CYCLE; i++)
+	    mc[i] = i;
+    }
+
+    if (turns <= DRIFT_BEFORE_CHECK)
+	return 0;
+
     for (i = 0; i < nc; ++i) {
-	isod = iso(i, capx[i], capy[i]);
+	isod = iso(i, cap[i].x, cap[i].y);
 	if (isod > d)
 	    d = isod;
     }
+
     for (i = 0; i < STABLE_CYCLE; ++i)
 	if (d != mc[i])
 	    stab = 0;
-    mc[mcc] = d;
-    mcc = (mcc + 1) % STABLE_CYCLE;
-    return stab ? d : 0;
+
+    mc[turns % STABLE_CYCLE] = d;
+    return stab;
 }
 
-/* This routine does the actual drifting
+/*
+ * Drift capital @j.
+ * Move it to an adjacent sector where it is at least as isolated.
 */
-
 static void
-fl_move(int j)
+drift_capital(int j)
 {
-    int i, n, newx, newy;
+    int dir, i, newx, newy;
 
-    for (i = roll0(6), n = 0; n < 6; i = (i + 1) % 6, ++n) {
-	newx = new_x(capx[j] + dirx[i]);
-	newy = new_y(capy[j] + diry[i]);
-	if (iso(j, newx, newy) >= iso(j, capx[j], capy[j])) {
-	    capx[j] = newx;
-	    capy[j] = newy;
+    dir = DIR_L + roll0(6);
+    for (i = 0; i < 6; i++) {
+	if (dir > DIR_LAST)
+	    dir -= 6;
+	newx = new_x(cap[j].x + diroff[dir][0]);
+	newy = new_y(cap[j].y + diroff[dir][1]);
+	dir++;
+	if (iso(j, newx, newy) >= iso(j, cap[j].x, cap[j].y)) {
+	    cap[j].x = newx;
+	    cap[j].y = newy;
 	    return;
 	}
     }
 }
 
-/****************************************************************************
-  GROW THE CONTINENTS
-****************************************************************************/
 
-/* Look for a coastal sector of continent c
-*/
+/*
+ * Grow land
+ */
 
-static void
-find_coast(int c)
+static int
+is_coastal(int x, int y)
 {
-    int i, j;
+    return adj_land[XYOFFSET(x, y)]
+	!= (1u << (DIR_LAST + 1)) - (1u << DIR_FIRST);
+}
 
-    for (i = 0; i < secs; ++i) {
-	sectc[c][i] = 0;
-	for (j = 0; j < 6; ++j)
-	    if (own[new_x(sectx[c][i] + dirx[j])][new_y(secty[c][i] + diry[j])] == -1)
-		sectc[c][i] = 1;
+struct hexagon_iter {
+    int dir, i, n;
+};
+
+/*
+ * Start iterating around @x0,@y0 at distance @d.
+ * Set *x,*y to coordinates of the first sector.
+ */
+static inline void
+hexagon_first(struct hexagon_iter *iter, int x0, int y0, int n,
+	      int *x, int *y)
+{
+    *x = new_x(x0 - 2 * n);
+    *y = y0;
+    iter->dir = DIR_FIRST;
+    iter->i = 0;
+    iter->n = n;
+}
+
+/*
+ * Continue iteration started with hexagon_first().
+ * Set *x,*y to coordinates of the next sector.
+ * Return whether we're back at the first sector, i.e. iteration is
+ * complete.
+ */
+static inline int
+hexagon_next(struct hexagon_iter *iter, int *x, int *y)
+{
+    *x = new_x(*x + diroff[iter->dir][0]);
+    *y = new_y(*y + diroff[iter->dir][1]);
+    iter->i++;
+    if (iter->i == iter->n) {
+	iter->i = 0;
+	iter->dir++;
+    }
+    return iter->dir <= DIR_LAST;
+}
+
+/*
+ * Is @x,@y in no exclusive zone other than perhaps @c's?
+ */
+static int
+xzone_ok(int c, int x, int y)
+{
+    int off = XYOFFSET(x, y);
+
+    return xzone[off] == c || xzone[off] == -1;
+}
+
+/*
+ * Add sectors within distance @dist of @x,@y to @c's exclusive zone.
+ */
+static void
+xzone_around_sector(int c, int x, int y, int dist)
+{
+    int d, x1, y1, off;
+    struct hexagon_iter hexit;
+
+    assert(xzone_ok(c, x, y));
+
+    xzone[XYOFFSET(x, y)] = c;
+    for (d = 1; d <= dist; d++) {
+	hexagon_first(&hexit, x, y, d, &x1, &y1);
+	do {
+	    off = XYOFFSET(x1, y1);
+	    if (xzone[off] == -1)
+		xzone[off] = c;
+	    else if (xzone[off] != c)
+		xzone[off] = -2;
+	} while (hexagon_next(&hexit, &x1, &y1));
     }
 }
 
-/* Used for measuring distances
-*/
-static int
-next_vector(int n)
+/*
+ * Add sectors within distance @dist to island @c's exclusive zone.
+ */
+static void
+xzone_around_island(int c, int dist)
 {
     int i;
 
-    if (n == 1) {
-	vector[0] += 1;
-	vector[0] %= 6;
-	return vector[0];
-    }
-    for (i = 1; i < n && vector[i] == vector[i - 1]; ++i) ;
-    vector[i - 1] += 1;
-    vector[i - 1] %= 6;
-    return i > 1 || vector[0] > 0;
+    for (i = 0; i < isecs[c]; i++)
+	xzone_around_sector(c, sect[c][i].x, sect[c][i].y, dist);
 }
 
-/* Test to see if we're allowed to grow there: the arguments di and id
-*/
-static int
-try_to_grow(int c, int newx, int newy, int d)
-{
-    int i, j, px, py;
-
-    for (i = 1; i <= d; ++i) {
-	for (j = 0; j < i; ++j)
-	    vector[j] = 0;
-	do {
-	    px = newx;
-	    py = newy;
-	    for (j = 0; j < i; ++j) {
-		px = new_x(px + dirx[vector[j]]);
-		py = new_y(py + diry[vector[j]]);
-	    }
-	    if (own[px][py] != -1 &&
-		own[px][py] != c &&
-		(DISTINCT_ISLANDS || own[px][py] < nc))
-		return 0;
-	} while (next_vector(i));
-    }
-    sectx[c][secs] = newx;
-    secty[c][secs] = newy;
-    own[newx][newy] = c;
-    return 1;
-}
-
-/* Move along the coast in a clockwise direction.
-*/
-
+/*
+ * Initialize exclusive zones around @n islands.
+ */
 static void
-next_coast(int c, int x, int y, int *xp, int *yp)
+xzone_init(int n)
 {
-    int i, nx, ny, wat = 0;
+    int i, c;
 
-    if (secs == 1) {
-	*xp = x;
-	*yp = y;
-	return;
+    for (i = 0; i < WORLD_SZ(); i++)
+	xzone[i] = -1;
+
+    for (c = 0; c < n; c++)
+	xzone_around_island(c, id);
+}
+
+/*
+ * Initialize breadth-first search.
+ */
+static void
+bfs_init(void)
+{
+    int i;
+
+    for (i = 0; i < WORLD_SZ(); i++) {
+	closest[i] = -1;
+	distance[i] = USHRT_MAX;
     }
 
-    for (i = 0; i < 12; ++i) {
-	nx = new_x(x + dirx[i % 6]);
-	ny = new_y(y + diry[i % 6]);
-	if (own[nx][ny] == -1)
-	    wat = 1;
-	if (wat && own[nx][ny] == c) {
-	    *xp = nx;
-	    *yp = ny;
-	    return;
+    bfs_queue_head = bfs_queue_tail = 0;
+}
+
+/*
+ * Add sector @x,@y to the BFS queue.
+ * It's closest to @c, with distance @dist.
+ */
+static void
+bfs_enqueue(int c, int x, int y, int dist)
+{
+    int off = XYOFFSET(x, y);
+
+    assert(dist < distance[off]);
+    closest[off] = c;
+    distance[off] = dist;
+    bfs_queue[bfs_queue_tail] = off;
+    bfs_queue_tail++;
+    if (bfs_queue_tail >= WORLD_SZ())
+	bfs_queue_tail = 0;
+    assert(bfs_queue_tail != bfs_queue_head);
+}
+
+/*
+ * Search breadth-first until the queue is empty.
+ */
+static void
+bfs_run_queue(void)
+{
+    int off, dist, i, noff, nx, ny;
+    coord x, y;
+
+    while (bfs_queue_head != bfs_queue_tail) {
+	off = bfs_queue[bfs_queue_head];
+	bfs_queue_head++;
+	if (bfs_queue_head >= WORLD_SZ())
+	    bfs_queue_head = 0;
+	dist = distance[off] + 1;
+	sctoff2xy(&x, &y, off);
+	for (i = DIR_FIRST; i <= DIR_LAST; i++) {
+	    nx = new_x(x + diroff[i][0]);
+	    ny = new_y(y + diroff[i][1]);
+	    noff = XYOFFSET(nx, ny);
+	    if (dist < distance[noff]) {
+		bfs_enqueue(closest[off], nx, ny, dist);
+	    } else if (distance[noff] == dist) {
+		if (closest[off] != closest[noff])
+		    closest[noff] = (natid)-1;
+	    } else
+		assert(distance[noff] < dist);
 	}
     }
 }
 
-/* Choose a sector to grow from
-*/
-
-static int
-new_try(int c)
+/*
+ * Add island @c's coastal sectors to the BFS queue, with distance 0.
+ */
+static void
+bfs_enqueue_island(int c)
 {
-    int i, starti;
+    int i;
 
-    if (secs == 1) {
-	if (sectc[c][0])
-	    return 0;
-    } else {
-	i = starti = (spike && sectc[c][secs - 1]) ? secs - 1 : roll0(secs);
-	do {
-	    if (sectc[c][i])
-		return i;
-	    i = (i + 1) % secs;
-	} while (i != starti);
-	assert(c >= nc);
-	return -1;
+    for (i = 0; i < isecs[c]; i++) {
+	if (is_coastal(sect[c][i].x, sect[c][i].y))
+	    bfs_enqueue(c, sect[c][i].x, sect[c][i].y, 0);
     }
-    return -1;
 }
 
-/* Grow continent c by 1 sector
-*/
+/*
+ * Enqueue spheres of influence borders for breadth-first search.
+ */
+static void
+bfs_enqueue_border(void)
+{
+    int x, y, off, dir, nx, ny, noff;
+
+    for (y = 0; y < WORLD_Y; y++) {
+	for (x = y % 2; x < WORLD_X; x += 2) {
+	    off = XYOFFSET(x, y);
+	    if (distance[off] <= id + 1)
+		continue;
+	    if (closest[off] == (natid)-1)
+		continue;
+	    for (dir = DIR_FIRST; dir <= DIR_LAST; dir++) {
+		nx = new_x(x + diroff[dir][0]);
+		ny = new_y(y + diroff[dir][1]);
+		noff = XYOFFSET(nx, ny);
+		if (closest[noff] != closest[off]) {
+		    bfs_enqueue(closest[off], x, y, id + 1);
+		    break;
+		}
+	    }
+	}
+    }
+}
+
+/*
+ * Compute spheres of influence
+ * A continent's sphere of influence is the set of sectors closer to
+ * it than to any other continent.
+ * Set closest[XYOFFSET(x, y)] to the closest continent's number,
+ * -1 if no single continent is closest.
+ * Set distance[XYOFFSET(x, y)] to the minimum of the distance to the
+ * closest coastal land sector and the distance to just outside the
+ * sphere of influence plus @id.  For sea sectors within a continent's
+ * sphere of influence, distance[off] - id is the distance to the
+ * border of the area where additional islands can be placed.
+ */
+static void
+init_spheres_of_influence(void)
+{
+    int c;
+
+    bfs_init();
+    for (c = 0; c < nc; c++)
+	bfs_enqueue_island(c);
+    bfs_run_queue();
+    bfs_enqueue_border();
+    bfs_run_queue();
+}
+
+/*
+ * Precompute distance to coast
+ * Set distance[XYOFFSET(x, y)] to the distance to the closest coastal
+ * land sector.
+ * Set closest[XYOFFSET(x, y)] to the closest continent's number,
+ * -1 if no single continent is closest.
+ */
+static void
+init_distance_to_coast(void)
+{
+    int c;
+
+    bfs_init();
+    for (c = 0; c < nc + ni; c++)
+	bfs_enqueue_island(c);
+    bfs_run_queue();
+}
+
+/*
+ * Is @x,@y in the same sphere of influence as island @c?
+ * Always true when @c is a continent.
+ */
+static int
+is_in_sphere(int c, int x, int y)
+{
+    return c < nc || closest[XYOFFSET(x, y)] == c % nc;
+}
+
+/*
+ * Can island @c grow at @x,@y?
+ */
+static int
+can_grow_at(int c, int x, int y)
+{
+    return own[XYOFFSET(x, y)] == -1 && xzone_ok(c, x, y)
+	&& is_in_sphere(c, x, y);
+}
+
+static void
+adj_land_update(int x, int y)
+{
+    int is_land = own[XYOFFSET(x, y)] != -1;
+    int dir, nx, ny, noff;
+
+    for (dir = DIR_FIRST; dir <= DIR_LAST; dir++) {
+	nx = new_x(x + diroff[dir][0]);
+	ny = new_y(y + diroff[dir][1]);
+	noff = XYOFFSET(nx, ny);
+	if (is_land)
+	    adj_land[noff] |= 1u << DIR_BACK(dir);
+	else
+	    adj_land[noff] &= ~(1u << DIR_BACK(dir));
+    }
+}
+
+static void
+add_sector(int c, int x, int y)
+{
+    int off = XYOFFSET(x, y);
+
+    assert(own[off] == -1);
+    xzone_around_sector(c, x, y, c < nc ? di : DISTINCT_ISLANDS ? id : 0);
+    sect[c][isecs[c]].x = x;
+    sect[c][isecs[c]].y = y;
+    isecs[c]++;
+    own[off] = c;
+    adj_land_update(x, y);
+}
+
+static int
+grow_weight(int c, int x, int y, int spike)
+{
+    int n, b;
+
+    /*
+     * #Land neighbors is #bits set in adj_land[].
+     * Count them Brian Kernighan's way.
+     */
+    n = 0;
+    for (b = adj_land[XYOFFSET(x, y)]; b; b &= b - 1)
+	n++;
+    assert(n > 0 && n < 7);
+
+    if (spike)
+	return (6 - n) * (6 - n);
+
+    return n * n * n;
+}
 
 static int
 grow_one_sector(int c)
 {
-    int done, coast_search, try1, x, y, newx, newy, i, n, sx, sy;
+    int spike = roll0(100) < sp;
+    int wsum, newx, newy, i, x, y, off, dir, nx, ny, noff, w;
 
-    spike = roll0(100) < sp;
-    if ((try1 = new_try(c)) == -1)
-	return 0;
-    x = sx = sectx[c][try1];
-    y = sy = secty[c][try1];
-    coast_search = 0;
-    done = 0;
-    do {
-	if (spike) {
-	    for (i = roll0(6), n = 0; n < 12 && !done; i = (i + 1) % 6, ++n) {
-		newx = new_x(x + dirx[i]);
-		newy = new_y(y + diry[i]);
-		if (own[newx][newy] == -1 &&
-		    (n > 5 ||
-		     (own[new_x(x+dirx[(i+5)%6])][new_y(y+diry[(i+5)%6])] == -1 &&
-		      own[new_x(x+dirx[(i+1)%6])][new_y(y+diry[(i+1)%6])] == -1)))
-		    if (try_to_grow(c, newx, newy, c < nc ? di : id))
-			done = 1;
+    assert(cur_seen < UINT_MAX);
+    cur_seen++;
+    wsum = 0;
+    newx = newy = -1;
+
+    for (i = 0; i < isecs[c]; i++) {
+	x = sect[c][i].x;
+	y = sect[c][i].y;
+	off = XYOFFSET(x, y);
+
+	for (dir = DIR_FIRST; dir <= DIR_LAST; dir++) {
+	    if (adj_land[off] & (1u << dir))
+		continue;
+	    nx = new_x(x + diroff[dir][0]);
+	    ny = new_y(y + diroff[dir][1]);
+	    noff = XYOFFSET(nx, ny);
+	    if (seen[noff] == cur_seen)
+		continue;
+	    assert(seen[noff] < cur_seen);
+	    seen[noff] = cur_seen;
+	    if (!can_grow_at(c, nx, ny))
+		continue;
+	    w = grow_weight(c, nx, ny, spike);
+	    assert(wsum < INT_MAX - w);
+	    wsum += w;
+	    if (roll0(wsum) < w) {
+		newx = nx;
+		newy = ny;
 	    }
-	} else
-	    for (i = roll0(6), n = 0; n < 6 && !done; i = (i + 1) % 6, ++n) {
-		newx = new_x(x + dirx[i]);
-		newy = new_y(y + diry[i]);
-		if (own[newx][newy] == -1)
-		    if (try_to_grow(c, newx, newy, c < nc ? di : id))
-			done = 1;
-	    }
-	next_coast(c, x, y, &x, &y);
-	++coast_search;
-    } while (!done && coast_search < COAST_SEARCH_MAX &&
-	     (secs == 1 || x != sx || y != sy));
-    if (!done && c < nc) {
-	qprint("fairland: error -- continent %c had no room to grow!\n",
-	       numletter[c % 62]);
-	fl_status |= STATUS_NO_ROOM;
+	}
     }
+
+    if (!wsum)
+	return 0;
+
+    add_sector(c, newx, newy);
+    return 1;
+}
+
+/*
+ * Grow the continents.
+ * Return 1 on success, 0 on error.
+ */
+static int
+grow_continents(void)
+{
+    int done = 1;
+    int c, secs;
+
+    xzone_init(0);
+
+    for (c = 0; c < nc; ++c) {
+	isecs[c] = 0;
+	if (!can_grow_at(c, cap[c].x, cap[c].y)
+	    || !can_grow_at(c, new_x(cap[c].x + 2), cap[c].y)) {
+	    done = 0;
+	    continue;
+	}
+	add_sector(c, cap[c].x, cap[c].y);
+	add_sector(c, new_x(cap[c].x + 2), cap[c].y);
+    }
+
+    if (!done) {
+	qprint("No room for continents\n");
+	return 0;
+    }
+
+    for (secs = 2; secs < sc && done; secs++) {
+	for (c = 0; c < nc; ++c) {
+	    if (!grow_one_sector(c))
+		done = 0;
+	}
+    }
+
+    if (!done)
+	qprint("Only managed to grow %d out of %d sectors.\n",
+	       secs - 1, sc);
     return done;
 }
 
-/* Grow all the continents
-*/
-static void
-grow_continents(void)
-{
-    int c;
-
-    for (c = 0; c < nc; ++c) {
-	sectx[c][0] = capx[c];
-	secty[c][0] = capy[c];
-	own[sectx[c][0]][secty[c][0]] = c;
-	sectx[c][1] = new_x(capx[c] + 2);
-	secty[c][1] = capy[c];
-	own[sectx[c][1]][secty[c][1]] = c;
-    }
-
-    for (secs = 2; secs < sc && !fl_status; ++secs) {
-	for (c = 0; c < nc; ++c) {
-	    find_coast(c);
-	    grow_one_sector(c);
-	}
-    }
-    for (c = 0; c < nc; ++c)
-	find_coast(c);
-
-    if (fl_status)
-	qprint("Only managed to grow %d out of %d sectors.\n", secs, sc);
-    ctot = nc;
-}
-
-/****************************************************************************
-  GROW THE ISLANDS
-****************************************************************************/
-
-/* Choose a place to start growing an island from
-*/
+/*
+ * Place additional island @c's first sector.
+ * Return 1 on success, 0 on error.
+ */
 static int
-place_island(int c, int *xp, int *yp)
+place_island(int c, int isiz)
 {
-    int d, sx, sy;
-    int ssy = roll0(WORLD_Y);
-    int ssx = new_x(roll0(WORLD_X / 2) * 2 + ssy % 2);
+    int n, x, y, d, w, newx, newy;
 
-    if (ssx > WORLD_X - 2)
-	ssx = new_x(ssx + 2);
-    for (d = di + id; d >= id; --d) {
-	sx = ssx;
-	sy = ssy;
-	*xp = new_x(sx + 2);
-	for (*yp = sy; *xp != sx || *yp != sy; *xp += 2) {
-	    if (*xp >= WORLD_X) {
-		*yp = new_y(*yp + 1);
-		*xp = *yp % 2;
-		if (*xp == sx && *yp == sy)
-		    break;
+    n = 0;
+
+    for (y = 0; y < WORLD_Y; y++) {
+	for (x = y % 2; x < WORLD_X; x += 2) {
+	    if (can_grow_at(c, x, y)) {
+		d = distance[XYOFFSET(x, y)];
+		assert(d > id);
+		w = (d - id) * (d - id);
+		n += MIN(w, (isiz + 2) / 3);
+		if (roll0(n) < w) {
+		    newx = x;
+		    newy = y;
+		}
 	    }
-	    if (own[*xp][*yp] == -1 && try_to_grow(c, *xp, *yp, d))
-		return 1;
 	}
     }
-    return 0;
+
+    if (n)
+	add_sector(c, newx, newy);
+    return n;
 }
 
-/* Grow all the islands
-*/
+static int
+int_cmp(const void *a, const void *b)
+{
+    return *(int *)b - *(int *)a;
+}
 
-static void
+static int *
+size_islands(void)
+{
+    int n = ni / nc;
+    int *isiz = malloc(n * sizeof(*isiz));
+    int r0, r1, i;
+
+    isiz[0] = n * is;
+    r1 = roll0(is);
+    for (i = 1; i < n; i++) {
+	r0 = r1;
+	r1 = roll0(is);
+	isiz[i] = is + r1 - r0;
+	isiz[0] -= isiz[i];
+    }
+
+    qsort(isiz, n, sizeof(*isiz), int_cmp);
+    return isiz;
+}
+
+/*
+ * Grow the additional islands.
+ * Return 1 on success, 0 on error.
+ */
+static int
 grow_islands(void)
 {
-    int c, x, y, isiz;
+    int *island_size = size_islands();
+    int xzone_valid = 0;
+    int carry = 0;
+    int i, j, c, done, secs, isiz, x, y;
 
-    for (c = nc; c < nc + ni; ++c) {
-	secs = 0;
-	if (!place_island(c, &x, &y))
-	    return;
-	isiz = roll(is) + roll0(is);
-	do {
-	    ++secs;
-	    find_coast(c);
-	} while (secs < isiz && grow_one_sector(c));
-	find_coast(c);
-	qprint(" %d(%d)", c - nc + 1, secs);
-	isecs[c] = secs;
-	ctot++;
+    init_spheres_of_influence();
+
+    for (i = 0; i < ni / nc; i++) {
+	c = nc + i * nc;
+
+	if (!xzone_valid)
+	    xzone_init(c);
+
+	carry += island_size[i];
+	isiz = MIN(2 * is, carry);
+
+	for (j = 0; j < nc; j++) {
+	    isecs[c + j] = 0;
+	    if (!place_island(c + j, isiz)) {
+		qprint("\nNo room for island #%d\n", c - nc + j + 1);
+		free(island_size);
+		return 0;
+	    }
+	}
+
+	done = 1;
+	for (secs = 1; secs < isiz && done; secs++) {
+	    for (j = 0; j < nc; j++) {
+		if (!grow_one_sector(c + j))
+		    done = 0;
+	    }
+	}
+
+	if (!done) {
+	    secs--;
+	    for (j = 0; j < nc; j++) {
+		if (isecs[c + j] != secs) {
+		    isecs[c + j]--;
+		    assert(isecs[c + j] == secs);
+		    x = sect[c + j][secs].x;
+		    y = sect[c + j][secs].y;
+		    own[XYOFFSET(x, y)] = -1;
+		    adj_land_update(x, y);
+		}
+	    }
+	    xzone_valid = 0;
+	}
+
+	for (j = 0; j < nc; j++)
+	    qprint(" %d(%d)", c - nc + j + 1, isecs[c + j]);
+
+	carry -= secs;
     }
+
+    free(island_size);
+    qprint("\n");
+
+    if (carry)
+	qprint("Only managed to grow %d out of %d island sectors.\n",
+	       is * ni - carry * nc, is * ni);
+
+    return 1;
 }
 
-/****************************************************************************
-  CREATE ELEVATIONS
-****************************************************************************/
+
+/*
+ * Create elevations
+ */
+
 static void
 create_elevations(void)
 {
+    elevate_prep();
     elevate_land();
     elevate_sea();
 }
 
-/* Generic function for finding the distance to the closest sea, land, or
-   mountain
-*/
 static int
-distance_to_what(int x, int y, int flag)
+elev_cmp(const void *p, const void *q)
 {
-    int j, d, px, py;
+    int a = *(int *)p;
+    int b = *(int *)q;
+    int delev = elev[a] - elev[b];
 
-    for (d = 1; d < 5; ++d) {
-	for (j = 0; j < d; ++j)
-	    vector[j] = 0;
-	do {
-	    px = x;
-	    py = y;
-	    for (j = 0; j < d; ++j) {
-		px = new_x(px + dirx[vector[j]]);
-		py = new_y(py + diry[vector[j]]);
-	    }
-	    switch (flag) {
-	    case 0:		/* distance to sea */
-		if (own[px][py] == -1)
-		    return d;
-		break;
-	    case 1:		/* distance to land */
-		if (own[px][py] != -1)
-		    return d;
-		break;
-	    case 2:		/* distance to mountain */
-		if (elev[px][py] == INFINITY)
-		    return d;
-		break;
-	    }
-	} while (next_vector(d));
-    }
-    return d;
+    return delev ? delev : a - b;
 }
 
-#define ELEV elev[sectx[c][i]][secty[c][i]]
-#define distance_to_sea() (sectc[c][i]?1:distance_to_what(sectx[c][i], secty[c][i], 0))
-#define distance_to_mountain() distance_to_what(sectx[c][i], secty[c][i], 2)
+static void
+elevate_prep(void)
+{
+    int n = WORLD_SZ() * 8;
+    int off0, r, sign, elevation, d, x1, y1, off1;
+    coord x0, y0;
+    struct hexagon_iter hexit;
 
-/* Decide where the mountains go
-*/
+    init_distance_to_coast();
+
+    while (n > 0) {
+	off0 = roll0(WORLD_SZ());
+	sctoff2xy(&x0, &y0, off0);
+	if (own[off0] == -1) {
+	    r = roll(MIN(3, distance[off0]));
+	    sign = -1;
+	} else {
+	    r = roll(MIN(3, distance[off0]) + 1);
+	    sign = 1;
+	}
+	elevation = elev[off0] + sign * r * r;
+	elev[off0] = LIMIT_TO(elevation, SHRT_MIN, SHRT_MAX);
+	n--;
+	for (d = 1; d < r; d++) {
+	    hexagon_first(&hexit, x0, y0, d, &x1, &y1);
+	    do {
+		off1 = XYOFFSET(x1, y1);
+		elevation = elev[off1] + sign * (r * r - d * d);
+		elev[off1] = LIMIT_TO(elevation, SHRT_MIN, SHRT_MAX);
+		n--;
+	    } while (hexagon_next(&hexit, &x1, &y1));
+	}
+    }
+}
+
 static void
 elevate_land(void)
 {
-    int i, mountain_search, k, c, total, ns, nm, highest, where, h, newk,
-	r, dk;
+    int *off = malloc(MAX(sc, is * 2) * sizeof(*off));
+    int max_nm = (pm * MAX(sc, is * 2)) / 100;
+    int c, nm, i0, n, i;
+    double elevation, delta;
 
-    for (c = 0; c < ctot; ++c) {
-	total = 0;
-	ns = (c < nc) ? sc : isecs[c];
-	nm = (pm * ns) / 100;
-
-/* Place the mountains */
-
-	for (i = 0; i < ns; ++i) {
-	    dsea[i] = distance_to_sea();
-	    weight[i] = (total += (dsea[i] * dsea[i]));
+    for (c = 0; c < nc + ni; c++) {
+	nm = (pm * isecs[c]) / 100;
+	i0 = c < nc ? 2 : 0;
+	n = isecs[c] - i0;
+	for (i = 0; i < i0; i++)
+	    elev[XYOFFSET(sect[c][i].x, sect[c][i].y)] = PLATMIN;
+	for (i = 0; i < n; i++)
+	    off[i] = XYOFFSET(sect[c][i0 + i].x, sect[c][i0 + i].y);
+	qsort(off, n, sizeof(*off), elev_cmp);
+	delta = (double)(HIGHMIN - LANDMIN - 1) / (n - nm - 1);
+	elevation = LANDMIN;
+	for (i = 0; i < n - nm; i++) {
+	    elev[off[i]] = (int)(elevation + 0.5);
+	    elevation += delta;
 	}
-
-	for (k = nm, mountain_search = 0;
-	     k && mountain_search < MOUNTAIN_SEARCH_MAX;
-	     ++mountain_search) {
-	    r = roll0(total);
-	    for (i = 0; i < ns; ++i)
-		if (r < weight[i] && ELEV == -INFINITY &&
-		    (c >= nc ||
-		     ((!(capx[c] == sectx[c][i] &&
-			 capy[c] == secty[c][i])) &&
-		      (!(new_x(capx[c] + 2) == sectx[c][i] &&
-			 capy[c] == secty[c][i]))))) {
-		    ELEV = INFINITY;
-		    break;
-		}
-	    --k;
-	}
-
-/* Elevate land that is not mountain and not capital */
-
-	for (i = 0; i < ns; ++i)
-	    dmoun[i] = distance_to_mountain();
-	dk = (ns - nm - ((c < nc) ? 3 : 1) > 0) ?
-	  (100 * (HIGHMIN - LANDMIN)) / (ns - nm - ((c < nc) ? 3 : 1)) :
-	  100 * INFINITY;
-	for (k = 100 * (HIGHMIN - 1);; k -= dk) {
-	    highest = -INFINITY;
-	    where = -1;
-	    for (i = 0; i < ns; ++i) {
-		if (ELEV != INFINITY &&
-		    (c >= nc || ((!(capx[c] == sectx[c][i] &&
-				    capy[c] == secty[c][i])) &&
-				 (!(new_x(capx[c] + 2) == sectx[c][i] &&
-				    capy[c] == secty[c][i]))))) {
-		    h = 3 * (5 - dmoun[i]) + dsea[i];
-		    if (h > highest) {
-			highest = h;
-			where = i;
-		    }
-		}
-	    }
-	    if (where == -1)
-		break;
-	    newk = k / 100;
-	    if (newk >= HILLMIN && newk < PLATMIN)
-		newk = PLATMIN;
-	    if (newk < LANDMIN)
-		newk = LANDMIN;
-	    elev[sectx[c][where]][secty[c][where]] = newk;
-	    dsea[where] = -INFINITY;
-	    dmoun[where] = INFINITY;
-	}
-
-/* Elevate the mountains and capitals */
-
-	for (i = 0; i < ns; ++i) {
-	    if (ELEV == INFINITY) {
-		if (dsea[i] == 1)
-		    ELEV = HILLMIN + roll0(PLATMIN - HILLMIN);
-		else
-		    ELEV = HIGHMIN + roll0((256 - HIGHMIN) / 2) +
-		      roll0((256 - HIGHMIN) / 2);
-	    } else if (c < nc &&
-		       (((capx[c] == sectx[c][i] && capy[c] == secty[c][i])) ||
-			((new_x(capx[c] + 2) == sectx[c][i] &&
-			  capy[c] == secty[c][i]))))
-		ELEV = PLATMIN;
+	elevation = HIGHMIN;
+	delta = (127.0 - HIGHMIN) / max_nm;
+	for (; i < n; i++) {
+	    elevation += delta;
+	    elev[off[i]] = (int)(elevation + 0.5);
 	}
     }
-}
 
-#define distance_to_land() distance_to_what(x, y, 1)
+    free(off);
+}
 
 static void
 elevate_sea(void)
 {
-    int x, y;
+    int i, min;
 
-    for (y = 0; y < WORLD_Y; ++y) {
-	for (x = y % 2; x < WORLD_X; x += 2) {
-	    if (elev[x][y] == -INFINITY)
-		elev[x][y] = -roll(distance_to_land() * 20 + 27);
-	}
+    min = 0;
+    for (i = 0; i < WORLD_SZ(); i++) {
+	if (elev[i] < min)
+	    min = elev[i];
+    }
+
+    for (i = 0; i < WORLD_SZ(); i++) {
+	if (elev[i] < 0)
+	    elev[i] = -1 - 126 * elev[i] / min;
     }
 }
 
-/****************************************************************************
-  ADD THE RESOURCES
-****************************************************************************/
-
 static int
-set_fert(int e)
+elev_to_sct_type(int elevation)
 {
-    int fert = 0;
-    if (e < LANDMIN)
-	fert = LANDMIN - e + 40;
-    else if (e < FERT_MAX)
-	fert = (120 * (FERT_MAX - e)) / (FERT_MAX - LANDMIN);
-    if (fert > 100)
-	fert = 100;
-    return fert;
+    if (elevation < LANDMIN)
+	return SCT_WATER;
+    if (elevation < HIGHMIN)
+	return SCT_RURAL;
+    return SCT_MOUNT;
 }
 
-static int
-set_oil(int e)
-{
-    int oil = 0;
-    if (e < LANDMIN)
-	oil = (LANDMIN - e) * 2 + roll0(2);
-    else if (e <= OIL_MAX)
-	oil = (120 * (OIL_MAX - e + 1)) / (OIL_MAX - LANDMIN + 1);
-    if (oil > 100)
-	oil = 100;
-    return oil;
-}
 
-static int
-set_iron(int e)
-{
-    int iron = 0;
-    if (e >= IRON_MIN && e < HIGHMIN)
-	iron = (120 * (e - IRON_MIN + 1)) / (HIGHMIN - IRON_MIN);
-    if (iron > 100)
-	iron = 100;
-    return iron;
-}
+/*
+ * Add resources
+ */
 
+/*
+ * Map elevation @elev to a resource value according to @conf.
+ * This is a linear interpolation on the data points in @conf.
+ */
 static int
-set_gold(int e)
+elev_to_resource(int elev, struct resource_point conf[])
 {
-    int gold = 0;
-    if (e >= GOLD_MIN) {
-	if (e < HIGHMIN)
-	    gold = (80 * (e - GOLD_MIN + 1)) / (HIGHMIN - GOLD_MIN);
-	else
-	    gold = 100 - 20 * HIGHMIN / e;
-    }
-    if (gold > 100)
-	gold = 100;
-    return gold;
-}
+    int i, elev1, elev2, delev, res1, res2, dres;
 
-static int
-set_uran(int e)
-{
-    int uran = 0;
-    if (e >= URAN_MIN && e < HIGHMIN)
-	uran = (120 * (e - URAN_MIN + 1)) / (HIGHMIN - URAN_MIN);
-    if (uran > 100)
-	uran = 100;
-    return uran;
+    for (i = 1; elev > conf[i].elev; i++) ;
+    assert(conf[i - 1].elev <= elev);
+
+    elev1 = conf[i - 1].elev;
+    elev2 = conf[i].elev;
+    delev = elev2 - elev1;
+    res1 = conf[i - 1].res;
+    res2 = conf[i].res;
+    dres = res2 - res1;
+    return (int)(res1 + (double)((elev - elev1) * dres) / delev);
 }
 
 static void
 add_resources(struct sctstr *sct)
 {
-    sct->sct_fertil = set_fert(sct->sct_elev);
-    sct->sct_oil = set_oil(sct->sct_elev);
-    sct->sct_min = set_iron(sct->sct_elev);
-    sct->sct_gmin = set_gold(sct->sct_elev);
-    sct->sct_uran = set_uran(sct->sct_elev);
+    sct->sct_min = elev_to_resource(sct->sct_elev, iron_conf);
+    sct->sct_gmin = elev_to_resource(sct->sct_elev, gold_conf);
+    sct->sct_fertil = elev_to_resource(sct->sct_elev, fert_conf);
+    sct->sct_oil = elev_to_resource(sct->sct_elev, oil_conf);
+    sct->sct_uran = elev_to_resource(sct->sct_elev, uran_conf);
 }
 
-/****************************************************************************
-  DESIGNATE THE SECTORS
-****************************************************************************/
+
+/*
+ * Designate the sectors
+ */
 
 static void
 write_sects(void)
 {
-    struct sctstr *sct;
-    int c, x, y, total;
+    struct sctstr *sp;
+    int i;
 
-    for (y = 0; y < WORLD_Y; y++) {
-	for (x = y % 2; x < WORLD_X; x += 2) {
-	    sct = getsectp(x, y);
-	    total = elev[x][y];
-	    if (total < LANDMIN) {
-		sct->sct_type = SCT_WATER;
-	    } else if (total < HILLMIN)
-		sct->sct_type = SCT_RURAL;
-	    else if (total < PLATMIN)
-		sct->sct_type = SCT_MOUNT;
-	    else if (total < HIGHMIN)
-		sct->sct_type = SCT_RURAL;
-	    else
-		sct->sct_type = SCT_MOUNT;
-	    sct->sct_elev = total;
-	    sct->sct_newtype = sct->sct_type;
-	    sct->sct_dterr = own[sct->sct_x][y] + 1;
-	    if (ORE)
-		add_resources(sct);
-	}
+    for (i = 0; i < WORLD_SZ(); i++) {
+	sp = getsectid(i);
+	sp->sct_elev = elev[i];
+	sp->sct_type = elev_to_sct_type(sp->sct_elev);
+	sp->sct_newtype = sp->sct_type;
+	sp->sct_dterr = own[i] + 1;
+	sp->sct_coastal = is_coastal(sp->sct_x, sp->sct_y);
+	add_resources(sp);
     }
-    if (AIRPORT_MARKER)
-	for (c = 0; c < nc; ++c) {
-	    sct = getsectp(capx[c], capy[c]);
-	    sct->sct_type = SCT_AIRPT;
-	    sct->sct_newtype = SCT_AIRPT;
-	}
-    set_coastal_flags();
 }
 
-/****************************************************************************
-  PRINT A PICTURE OF THE MAP TO YOUR SCREEN
-****************************************************************************/
+
+/*
+ * Print a picture of the map
+ */
+
 static void
 output(void)
 {
-    int i, j;
+    int sx, sy, x, y, off, c, type;
+
     if (quiet == 0) {
-	for (i = 0; i < WORLD_Y; ++i) {
+	for (sy = -WORLD_Y / 2; sy < WORLD_Y / 2; sy++) {
+	    y = YNORM(sy);
 	    puts("");
-	    if (i % 2)
+	    if (y % 2)
 		printf(" ");
-	    for (j = i % 2; j < WORLD_X; j += 2) {
-		if (own[j][i] == -1)
+	    for (sx = -WORLD_X / 2 + y % 2; sx < WORLD_X / 2; sx += 2) {
+		x = XNORM(sx);
+		off = XYOFFSET(x, y);
+		c = own[off];
+		type = elev_to_sct_type(elev[off]);
+		if (type == SCT_WATER)
 		    printf(". ");
+		else if (type == SCT_MOUNT)
+		    printf("^ ");
+		else if (c >= nc)
+		    printf("%% ");
 		else {
-		    printf("%c ", map_symbol(j, i));
+		    assert(0 <= c && c < nc);
+		    if ((x == cap[c].x || x == new_x(cap[c].x + 2))
+			&& y == cap[c].y)
+			printf("%c ", numletter[c % 62]);
+		    else
+			printf("# ");
 		}
 	    }
 	}
     }
-    if (AIRPORT_MARKER)
-	printf("\n\nEach continent is marked by a \"*\" on the map (to distinguish them from\n"
-	       "the islands).  You can redesignate these airfields to wilderness sectors\n"
-	       "one at a time, each time you add a new country to the game.\n");
 }
 
-static int
-map_symbol(int x, int y)
+/*
+ * Print a map to help visualize own[].
+ * This is for debugging.
+ */
+void
+print_own_map(void)
 {
-    int c, iscap = 0;
+    int sx, sy, x, y, off;
 
-    for (c = 0; c < nc; ++c)
-	if ((x == capx[c] && y == capy[c])
-	    || (x == new_x(capx[c] + 2) && y == capy[c]))
-	    iscap = 1;
-    if ((elev[x][y] >= HILLMIN && elev[x][y] < PLATMIN)
-	|| elev[x][y] >= HIGHMIN)
-	return '^';
-    return own[x][y] >= nc ? '%' : iscap ? '#' : numletter[own[x][y] % 62];
+    for (sy = -WORLD_Y / 2; sy < WORLD_Y / 2; sy++) {
+	y = YNORM(sy);
+	printf("%4d ", sy);
+	for (sx = -WORLD_X / 2; sx < WORLD_X / 2; sx++) {
+	    x = XNORM(sx);
+	    off = XYOFFSET(x, y);
+	    if ((x + y) & 1)
+		putchar(' ');
+	    else if (own[off] == -1)
+		putchar('.');
+	    else
+		putchar(numletter[own[off] % 62]);
+	}
+	putchar('\n');
+    }
 }
 
-/***************************************************************************
-  WRITE A SCRIPT FOR PLACING CAPITALS
-****************************************************************************/
+/*
+ * Print a map to help visualize elev[].
+ * This is for debugging.  It expects the terminal to understand
+ * 24-bit color escape sequences \e[48;2;$red;$green;$blue;m.
+ */
+void
+print_elev_map(void)
+{
+    int sx, sy, x, y, off, sat;
+
+    for (sy = -WORLD_Y / 2; sy < WORLD_Y / 2; sy++) {
+	y = YNORM(sy);
+	printf("%4d ", sy);
+	for (sx = -WORLD_X / 2; sx < WORLD_X / 2; sx++) {
+	    x = XNORM(sx);
+	    off = XYOFFSET(x, y);
+	    if ((x + y) & 1)
+		putchar(' ');
+	    else if (!elev[off])
+		putchar(' ');
+	    else if (elev[off] < 0) {
+		sat = 256 + elev[off] * 2;
+		printf("\033[48;2;%d;%d;%dm \033[0m", sat, sat, 255);
+	    } else if (elev[off] < HIGHMIN / 2) {
+		sat = (HIGHMIN / 2 - elev[off]) * 4;
+		printf("\033[48;2;%d;%d;%dm \033[0m", sat, 255, sat);
+	    } else if (elev[off] < HIGHMIN) {
+		sat = 128 + (HIGHMIN - elev[off]) * 2;
+		printf("\033[48;2;%d;%d;%dm \033[0m", sat, sat / 2, sat / 4);
+	    } else {
+		sat = 128 + (elev[off] - HIGHMIN) * 2;
+		printf("\033[48;2;%d;%d;%dm^\033[0m", sat, sat, sat);
+	    }
+	}
+	putchar('\n');
+    }
+}
+
+/*
+ * Print a map to help visualize xzone[].
+ * This is for debugging.
+ */
+void
+print_xzone_map(void)
+{
+    int sx, sy, x, y, off;
+
+    for (sy = -WORLD_Y / 2; sy < WORLD_Y / 2; sy++) {
+	y = YNORM(sy);
+	printf("%4d ", sy);
+	for (sx = -WORLD_X / 2; sx < WORLD_X / 2; sx++) {
+	    x = XNORM(sx);
+	    off = XYOFFSET(x, y);
+	    if ((x + y) & 1)
+		putchar(' ');
+	    else if (own[off] >= 0)
+		putchar('-');
+	    else if (xzone[off] >= 0)
+		putchar(numletter[xzone[off] % 62]);
+	    else {
+		assert(own[off] == -1);
+		putchar(xzone[off] == -1 ? '.' : '!');
+	    }
+	}
+	putchar('\n');
+    }
+}
+
+/*
+ * Print a map to help visualize closest[].
+ * This is for debugging.
+ */
+void
+print_closest_map(void)
+{
+    int sx, sy, x, y, off;
+
+    for (sy = -WORLD_Y / 2; sy < WORLD_Y / 2; sy++) {
+	y = YNORM(sy);
+	printf("%4d ", sy);
+	for (sx = -WORLD_X / 2; sx < WORLD_X / 2; sx++) {
+	    x = XNORM(sx);
+	    off = XYOFFSET(x, y);
+	    if ((x + y) & 1)
+		putchar(' ');
+	    else if (closest[off] == (natid)-1)
+		putchar('.');
+	    else if (!distance[off]) {
+		assert(closest[off] == own[off]);
+		putchar('-');
+	    } else {
+		putchar(numletter[closest[off] % 62]);
+	    }
+	}
+	printf("\n");
+    }
+}
+
+void
+print_distance_map(void)
+{
+    int sx, sy, x, y, off;
+
+    for (sy = -WORLD_Y / 2; sy < WORLD_Y / 2; sy++) {
+	y = YNORM(sy);
+	printf("%4d ", sy);
+	for (sx = -WORLD_X / 2; sx < WORLD_X / 2; sx++) {
+	    x = XNORM(sx);
+	    off = XYOFFSET(x, y);
+	    if ((x + y) & 1)
+		putchar(' ');
+	    else if (closest[off] == (natid)-1)
+		putchar('.');
+	    else if (!distance[off]) {
+		assert(closest[off] == own[off]);
+		putchar('-');
+	    } else {
+		putchar(numletter[distance[off] % 62]);
+	    }
+	}
+	printf("\n");
+    }
+}
+
+
+/*
+ * Write a script for placing capitals
+ */
+
 static int
 write_newcap_script(void)
 {
@@ -1146,50 +1666,16 @@ write_newcap_script(void)
     FILE *script = fopen(outfile, "w");
 
     if (!script) {
-	printf("fairland: error, unable to write to %s.\n", outfile);
-	return -1;
+	fprintf(stderr, "%s: unable to write to %s (%s)\n",
+		program_name, outfile, strerror(errno));
+	return 0;
     }
 
     for (c = 0; c < nc; ++c) {
 	fprintf(script, "add %d %d %d p\n", c + 1, c + 1, c + 1);
-	if (AIRPORT_MARKER)
-	    fprintf(script, "des %d,%d -\n", capx[c], capy[c]);
-	fprintf(script, "newcap %d %d,%d\n", c + 1, capx[c], capy[c]);
+	fprintf(script, "newcap %d %d,%d\n", c + 1, cap[c].x, cap[c].y);
     }
     fprintf(script, "add %d visitor visitor v\n", c + 1);
     fclose(script);
-    return 0;
-}
-
-static void
-qprint(const char *const fmt, ...)
-{
-    va_list ap;
-
-    if (!quiet) {
-	va_start(ap, fmt);
-	vfprintf(stdout, fmt, ap);
-	va_end(ap);
-    }
-}
-
-static void
-set_coastal_flags(void)
-{
-    int i, j;
-    struct sctstr *sp;
-
-    qprint("setting coastal flags...\n");
-    for (i = 0; i < nc; ++i) {
-	for (j = 0; j < sc; j++) {
-	    sp = getsectp(sectx[i][j], secty[i][j]);
-	    sp->sct_coastal = sectc[i][j];
-	}
-    }
-    for (i = nc; i < nc + ni; ++i) {
-	for (j = 0; j < isecs[i]; j++) {
-	    sp = getsectp(sectx[i][j], secty[i][j]);
-	    sp->sct_coastal = sectc[i][j];
-	}
-    }
+    return 1;
 }

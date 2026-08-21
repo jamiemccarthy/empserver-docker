@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@
  *     Thomas Ruschak
  *     Ken Stevens, 1995
  *     Steve McClure, 1998
+ *     Markus Armbruster, 2004-2017
  */
 
 #include <config.h>
@@ -45,7 +46,7 @@
 static void expose_land(struct shpstr *s1, struct lndstr *l1);
 
 int
-ltend(void)
+c_ltend(void)
 {
     struct nstr_item targets;
     struct nstr_item tenders;
@@ -62,6 +63,7 @@ ltend(void)
     int transfer;
     int total;
     char *p;
+    char prompt[512];
     char buf[1024];
 
     if (!(ip = whatitem(player->argp[1], "Transfer what commodity? ")))
@@ -70,25 +72,34 @@ ltend(void)
     if (!snxtitem(&tenders, EF_SHIP, player->argp[2], "Tender(s)? "))
 	return RET_SYN;
     while (nxtitem(&tenders, &tender)) {
-	if (!player->owner)
+	if (!player->owner || !tender.shp_own) {
+	    if (tenders.sel == NS_LIST)
+		pr("You don't own ship #%d!\n", tender.shp_uid);
 	    continue;
-	if (!(p = getstarg(player->argp[3], "Amount to transfer? ", buf)))
+	}
+	sprintf(prompt, "Number of %s to tend from %s? ",
+		ip->i_name, prship(&tender));
+	if (!(p = getstarg(player->argp[3], prompt, buf)))
 	    return RET_FAIL;
+	if (!*p)
+	    continue;
 	if (!check_ship_ok(&tender))
 	    return RET_FAIL;
-	if ((amt = atoi(p)) == 0)
-	    break;
+	amt = atoi(p);
+	if (!amt) {
+	    pr("Amount must be non-zero!\n");
+	    return RET_SYN;
+	}
 	ontender = tender.shp_item[ip->i_uid];
 	if (ontender == 0 && amt > 0) {
 	    pr("No %s on %s\n", ip->i_name, prship(&tender));
-	    return RET_FAIL;
+	    continue;
 	}
 	vbase = &mchr[(int)tender.shp_type];
 	maxtender = vbase->m_item[ip->i_uid];
 	if (maxtender == 0) {
-	    pr("A %s cannot hold any %s\n",
-	       mchr[(int)tender.shp_type].m_name, ip->i_name);
-	    return RET_FAIL;
+	    pr("%s cannot hold any %s\n", prship(&tender), ip->i_name);
+	    continue;
 	}
 	if (!snxtitem(&targets, EF_LAND,
 		      player->argp[4], "Units to be tended? "))
@@ -97,11 +108,17 @@ ltend(void)
 	    return RET_FAIL;
 	total = 0;
 	while (nxtitem(&targets, &target)) {
-	    if (!player->owner)
+	    if (!player->owner || !target.lnd_own) {
+		if (targets.sel == NS_LIST)
+		    pr("You don't own land unit #%d!\n", target.lnd_uid);
 		continue;
-
-	    if (target.lnd_ship != tender.shp_uid)
+	    }
+	    if (target.lnd_ship != tender.shp_uid) {
+		if (targets.sel == NS_LIST)
+		    pr("%s is not on %s!\n",
+		       prland(&target), prship(&tender));
 		continue;
+	    }
 	    ontarget = target.lnd_item[ip->i_uid];
 	    if (ontarget == 0 && amt < 0) {
 		pr("No %s on %s\n", ip->i_name, prland(&target));

@@ -116,16 +116,16 @@ edit u 0 U 20 L -16,-8 O 4 f 10 U 21 L -14,-8 U 23 U 22 m 1
 | sec#25 raids, #27 doesn't
 edit l -12,-8 x 200 X 4 l 50
 give m -12,-8 10
-edit u 20 U 26 L -12,-8 m 20 U 25 T sec U 27 e 10
+edit u 20 U 26 L -12,-8 m 5 U 25 T sec m 45 U 27 e 10 m 10
 edit u 25 U 24 T spy
 | win shootout in loyal sector (no takeover)
 edit l -10,-8 x 20 X 4
 give m -10,-8 10
-| lose shootout, linf#28 survives
+| lose shootout, linf#28 dies
 edit l -8,-8 x 22 X 4 O 2 l 50
 give m -8,-8 1
-edit u 20 U 28 L -8,-8 T linf m 20
-| lose shootout, inf#29 dies
+edit u 20 U 28 L -8,-8 T linf e 15 m 20
+| lose shootout, inf#29 survives
 edit l -6,-8 x 52 X 4 O 2 l 50
 edit u 20 U 29 L -6,-8 e 40 m 50
 | military to direct moving che

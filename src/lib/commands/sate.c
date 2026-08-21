@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@
 #include "plane.h"
 
 int
-sate(void)
+c_satellite(void)
 {
     static int sct_shp_or_lnd[] = { EF_SECTOR, EF_SHIP, EF_LAND, EF_BAD };
     double tech;

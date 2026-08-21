@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@
  * Initialized on startup from plane.config and deity custom config (if any).
  * Terminated by a sentinel with null pl_name.
  */
-struct plchrstr plchr[PLN_TYPE_MAX + 2];
+struct plchrstr plchr[PLCHR_SZ];
 
 #define logx(a, b) (log((a)) / log((b)))
 #define PLN_ATTDEF(b, t) (b + ((b?1:0) * ((t/20)>10?10:(t/20))))

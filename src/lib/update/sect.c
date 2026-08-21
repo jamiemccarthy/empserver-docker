@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *  Known contributors to this file:
  *     Dave Pare, 1986
  *     Steve McClure, 1996
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2021
  */
 
 #include <config.h>
@@ -58,7 +58,7 @@ buildeff(struct sctstr *sp)
 	 * Easier to destroy than to build.
 	 */
 	dcp = &dchr[sp->sct_type];
-	build = 4 * avail / dcp->d_bwork;
+	build = dcp->d_bwork > 0 ? 4 * avail / dcp->d_bwork : 100;
 	if (build <= sp->sct_effic)
 	    sp->sct_effic -= build;
 	else {
@@ -72,7 +72,7 @@ buildeff(struct sctstr *sp)
 
     if (sp->sct_type == sp->sct_newtype) {
 	dcp = &dchr[sp->sct_type];
-	delta = avail / dcp->d_bwork;
+	delta = dcp->d_bwork > 0 ? avail / dcp->d_bwork : 100;
 	if (delta > 100 - sp->sct_effic)
 	    delta = 100 - sp->sct_effic;
 	build = get_materials(sp, dcp->d_mat, delta);

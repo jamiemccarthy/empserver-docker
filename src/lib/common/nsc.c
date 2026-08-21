@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  *  nsc.c: Empire selection global structures
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2004-2016
+ *     Markus Armbruster, 2004-2021
  */
 
 /*
@@ -144,6 +144,7 @@ struct castr pchr_ca[] = {
      EF_ITEM, 0, CA_DUMP},
     {"camt", fldoff(p_camt), NSC_USHORT, MAXPRCON, NULL, EF_BAD, 0,
      CA_DUMP},
+    {"bwork", fldoff(p_bwork), NSC_INT, 0, NULL, EF_BAD, 0, CA_DUMP},
     {"type", fldoff(p_type), NSC_SITYPE(i_type), 0, NULL, EF_ITEM, 0,
      CA_DUMP},
     {"level", fldoff(p_level), NSC_INT, 0, NULL, EF_LEVEL, 0, CA_DUMP},
@@ -640,7 +641,7 @@ struct castr cou_ca[] = {
 #undef CURSTR
 };
 
-struct castr nat_ca[sizeof(cou_ca) / sizeof(*cou_ca)];
+struct castr nat_ca[ARRAY_SIZE(cou_ca)];
 /* initialized by nsc_init() */
 
 struct castr relat_ca[] = {

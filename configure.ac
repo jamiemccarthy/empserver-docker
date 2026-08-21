@@ -1,6 +1,6 @@
 #
 #   Empire - A multi-player, client/server Internet based war game.
-#   Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+#   Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
 #                 Ken Stevens, Steve McClure, Markus Armbruster
 #
 #   Empire is free software: you can redistribute it and/or modify
@@ -27,14 +27,14 @@
 #   configure.ac: Autoconf input file
 #
 #   Known contributors to this file:
-#      Markus Armbruster, 2005-2016
+#      Markus Armbruster, 2005-2020
 #
 # Process this file with autoconf to produce a configure script.
 
 # Autoconf makes checking for and programming around assorted ancient
-# crap relatively painless.  But why bother?  Just rely on C89 and
-# POSIX, and when something breaks on some oddball machine, see
-# whether it's worth fixing.
+# crap relatively painless.  But why bother?  Just rely on POSIX, and
+# when something breaks on some oddball machine, see whether it's
+# worth fixing.
 
 AC_PREREQ(2.69)
 AC_INIT([Wolfpack Empire],
@@ -46,15 +46,19 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
-
 ### Checks for programs
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_RANLIB
-AC_PROG_CC
+
+AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 # Private automake macro, tsk, tsk, tsk...
 _AM_DEPENDENCIES(CC)
+AC_DEFINE([_XOPEN_SOURCE], [600],
+	  [Request POSIX-1.2001 with XSI Extension])
+# Note: this is after AC_PROG_CC_STDC, because Solaris cc fails with
+# _XOPEN_SOURCE unless switched to C99, which breaks AC_PROG_CC_STDC.
 
 AC_ARG_VAR(NROFF, [nroff command])
 AC_CHECK_PROG(NROFF, groff, [GROFF_NO_SGR= groff -Tascii -U], nroff)
@@ -80,12 +84,17 @@ LIBS="$LIBS_SOCKETS $LIBS"
 AX_LIB_SOCKET_NSL
 LIBS_server="$LIBS"
 MY_WITH_READLINE
+MY_WITH_TERMINFO
+LIBS_client="$LIBS"
 
 
 ### Checks for header files
 
 
 ### Checks for typedefs, structures, and compiler characteristics
+
+if test "$GCC"
+then
 
 # Enable useful warnings
 # Some of them are commented out because the code needs cleanup first
@@ -114,9 +123,6 @@ dnl -Wswitch-default dnl
 -Wundef dnl
 -Wno-unused-parameter dnl
 ], [], [$cflags_test])
-
-# Our carg() conflicts with libm's TODO clean that up
-MY_APPEND_COMPILE_FLAGS([-fno-builtin-carg -Wno-incompatible-library-redeclaration])
 
 # No multiple definitions of uninitialized global variables
 MY_APPEND_COMPILE_FLAGS([-fno-common])
@@ -164,10 +170,13 @@ main(int argc, char *argv[])
 }
     ]])])
 
+fi # $GCC
+
 
 ### Checks for library functions
 
-AC_CHECK_FUNCS(getaddrinfo getpass)
+AC_CHECK_FUNCS(getaddrinfo)
+MY_WORKING_IN6_IS_ADDR_V4MAPPED
 MY_FUNC_MAKECONTEXT
 
 
@@ -211,9 +220,6 @@ LWP)	AC_DEFINE([EMPTH_LWP], 1, [Define to use LWP threads]) ;;
 POSIX)	AC_DEFINE([EMPTH_POSIX], 1, [Define to use POSIX threads]) ;;
 Windows) AC_DEFINE([EMPTH_W32], 1, [Define to use Windows threads]) ;;
 esac
-
-MY_WITH_TERMINFO
-LIBS_client="$LIBS"
 
 
 ### Output

@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1986
  *     Thomas Ruschak, 1992
  *     Steve McClure, 1996
- *     Markus Armbruster, 2006-2014
+ *     Markus Armbruster, 2006-2020
  */
 
 #include <config.h>
@@ -716,7 +716,7 @@ ac_flak_dam(int guns, int def, int pl_flags)
 	 0.35f, 0.40f, 0.45f, 0.50f, 0.50f, 0.55f, 0.60f, 0.65f,
     /*    +5    +6     +7     +8    >+8 */
 	 0.70f,0.75f, 0.80f, 0.85f, 1.1305f };
-    enum { FLAK_MAX = sizeof(flaktable)/sizeof(flaktable[0]) - 1 };
+    enum { FLAK_MAX = ARRAY_SIZE(flaktable) - 1 };
 
     flak = guns - def;
     if ((pl_flags & P_T) == 0)

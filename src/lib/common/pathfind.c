@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  *  pathfind.c: Find cheapest paths
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2014
+ *     Markus Armbruster, 2014-2020
  */
 
 #include <config.h>
@@ -42,9 +42,9 @@
 #include "sect.h"
 
 #ifdef PATH_FIND_DEBUG
-#define DPRINTF(fmt, ...) ((void)printf(fmt , ## __VA_ARGS__))
+#define DPRINTF(...) ((void)fprintf(stdout, ## __VA_ARGS__))
 #else
-#define DPRINTF(fmt, ...) ((void)0)
+#define DPRINTF(...) ((void)0)
 #endif
 
 static char *bufrotate(char *buf, size_t bufsz, size_t i);
@@ -490,12 +490,11 @@ path_find_visualize(coord sx, coord sy, coord dx, coord dy)
 {
     int uid;
     int xmin, xmax, ymin, ymax, x, y, odd, ch;
-    double c, u, cost;
+    double c, cost;
     char buf[1024];
 
     assert(pf_cost(XYOFFSET(sx, sy)) == 0.0);
     c = pf_cost(XYOFFSET(dx, dy));
-    u = c / 10.0;
 
     /* find bounding box */
     xmin = xmax = 0;

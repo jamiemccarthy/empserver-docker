@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -254,7 +254,7 @@ unit_move_non_dir(struct emp_qelem *list, char *cp, int *map_shown)
 	if (leader->ef_type != EF_SHIP)
 	    return NULL;
 	cp = unit_move_parse(cp, leader_str);
-	sona();
+	c_sonar();
 	player->btused++;	/* FIXME likewise */
 	*map_shown = 1;
 	break;
@@ -268,9 +268,9 @@ unit_move_non_dir(struct emp_qelem *list, char *cp, int *map_shown)
 	    player->argp[1] = leader_str;
 	}
 	if (leader->ef_type == EF_SHIP)
-	    mine();
+	    c_mine();
 	else
-	    landmine();
+	    c_lmine();
 	player->btused++;	/* FIXME likewise */
 	*map_shown = 1;
 	break;

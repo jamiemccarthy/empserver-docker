@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *     Dave Pare, 1994
  *     Steve McClure, 1996
  *     Ron Koenderink, 2005
- *     Markus Armbruster, 2007-2012
+ *     Markus Armbruster, 2007-2020
  */
 
 #include <config.h>
@@ -83,7 +83,7 @@ static int
 update_get_schedule(void)
 {
     time_t now = time(NULL);
-    int n = sizeof(update_time) / sizeof(*update_time);
+    int n = ARRAY_SIZE(update_time);
     int i;
 
     ef_truncate(EF_UPDATES, 0);

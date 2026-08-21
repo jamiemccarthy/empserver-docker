@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  *  Known contributors to this file:
  *     Ken Stevens, 1995
- *     Markus Armbruster, 2011-2015
+ *     Markus Armbruster, 2011-2021
  */
 
 #include <config.h>
@@ -40,7 +40,7 @@
 #include "ship.h"
 
 int
-boar(void)
+c_board(void)
 {
     struct combat off[1];	/* boarding ship or sector */
     struct combat def[1];	/* defending ship */
@@ -166,7 +166,7 @@ boar(void)
     if (!(att_fight(A_BOARD, off, &olist, 1.0, def, &dlist, 1.0))) {
 	getship(def_uid, &ship);
 	if (ship.shp_rflags & RET_BOARDED) {
-	    retreat_ship(&ship, def_own, 'u');
+	    retreat_ship(&ship, def_own);
 	    putship(def_uid, &ship);
 	}
     }

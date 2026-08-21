@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  *  cargo.c: Cargo lists
  *
  *  Known contributors to this file:
- *     Markus Armbruster, 2009
+ *     Markus Armbruster, 2009-2020
  */
 
 #include <config.h>
@@ -94,7 +94,7 @@ clink_init(struct clink *cl)
     unsigned i;
 
     cl->next = -1;
-    for (i = 0; i < sizeof(cl->head) / sizeof(*cl->head); i++)
+    for (i = 0; i < ARRAY_SIZE(cl->head); i++)
 	cl->head[i] = -1;
 }
 

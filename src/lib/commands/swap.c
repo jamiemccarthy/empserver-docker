@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ static void print_res(struct sctstr *);
  * Syntax: swap <SECT> <SECT>
  */
 int
-swaps(void)
+c_swapsector(void)
 {
     struct sctstr secta, sectb, tmp;
     char buf[1024];

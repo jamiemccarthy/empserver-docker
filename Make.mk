@@ -1,6 +1,6 @@
 #
 #   Empire - A multi-player, client/server Internet based war game.
-#   Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+#   Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
 #                 Ken Stevens, Steve McClure, Markus Armbruster
 #
 #   Empire is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 #   Make.mk: The real Makefile, included by GNUmakefile
 #
 #   Known contributors to this file:
-#      Markus Armbruster, 2005-2017
+#      Markus Armbruster, 2005-2020
 #
 
 # This makefile was inspired by `Recursive Make Considered Harmful',
@@ -72,7 +72,7 @@ include $(srcdir)/info/subjects.mk
 topics := $(patsubst %.t,%,$(notdir $(tsrc)))
 info := $(topics) $(subjects) all TOP
 scripts := $(srcdir)/src/scripts
-depcomp := $(SHELL) $(srcdir)/depcomp
+depcomp := $(SHELL) $(srcdir)/build-aux/depcomp
 tarball := $(SHELL) -e $(scripts)/tarball
 econfig := $(sysconfdir)/empire/econfig
 schedule := $(sysconfdir)/empire/schedule
@@ -81,8 +81,8 @@ edatadir := $(datadir)/empire
 builtindir := $(edatadir)/builtin
 einfodir := $(edatadir)/info.nr
 ehtmldir := $(edatadir)/info.html
-client/w32 := arpa/inet.h netdb.h netinet/in.h sys/time.h sys/socket.h	\
-sys/uio.h unistd.h w32io.c w32sockets.c w32types.h
+client/w32 := arpa/inet.h getopt.c netdb.h netinet/in.h sys/time.h	\
+sys/socket.h sys/uio.h unistd.h w32io.c w32sockets.c w32types.h
 
 # Abbreviate make output
 # Run make with a V=1 parameter for full output.
@@ -96,6 +96,11 @@ quiet-command = $1
 else
 quiet-command = @echo $2 && $1
 endif
+
+# Helper for running tests
+# Usage: $(call run-test, SHELL-SCRIPT)
+# Recursively expanded, or else parameters don't work
+run-test = $(call quiet-command, $(SHELL) -e $1 $(srcdir), TEST $1)
 
 # How to substitute Autoconf output variables
 # Recursively expanded so that $@ and $< work.
@@ -253,33 +258,35 @@ check:        export EMPIRE_CHECK_ACCEPT :=
 check-accept: export EMPIRE_CHECK_ACCEPT := y
 _check: all
 	@echo "Warning: test suite is immature and needs work." >&2
-	$(srcdir)/tests/files-test $(srcdir)
-	$(srcdir)/tests/fairland-test $(srcdir)
-	$(srcdir)/tests/info-test $(srcdir)
+	$(call run-test, $(srcdir)/tests/files-test)
+	$(call run-test, $(srcdir)/tests/fairland-test)
+	$(call run-test, $(srcdir)/tests/info-test)
 ifeq ($(empthread),LWP)
-	$(srcdir)/tests/smoke-test $(srcdir)
-	$(srcdir)/tests/actofgod-test $(srcdir)
-	$(srcdir)/tests/build-test $(srcdir)
-	$(srcdir)/tests/navi-march-test $(srcdir)
-	$(srcdir)/tests/fire-test $(srcdir)
-	$(srcdir)/tests/torpedo-test $(srcdir)
-	$(srcdir)/tests/bridgefall-test $(srcdir)
-	$(srcdir)/tests/retreat-test $(srcdir)
-	$(srcdir)/tests/update-test $(srcdir)
-	$(srcdir)/tests/version-test $(srcdir)
+	$(call run-test, $(srcdir)/tests/smoke-test)
+	$(call run-test, $(srcdir)/tests/actofgod-test)
+	$(call run-test, $(srcdir)/tests/build-test)
+	$(call run-test, $(srcdir)/tests/load-tend-test)
+	$(call run-test, $(srcdir)/tests/navi-march-test)
+	$(call run-test, $(srcdir)/tests/fire-test)
+	$(call run-test, $(srcdir)/tests/torpedo-test)
+	$(call run-test, $(srcdir)/tests/bridgefall-test)
+	$(call run-test, $(srcdir)/tests/retreat-test)
+	$(call run-test, $(srcdir)/tests/update-test)
+	$(call run-test, $(srcdir)/tests/version-test)
 else
-	@echo "$(srcdir)/tests/smoke-test SKIPPED"
-	@echo "$(srcdir)/tests/actofgod-test SKIPPED"
-	@echo "$(srcdir)/tests/build-test SKIPPED"
-	@echo "$(srcdir)/tests/navi-march-test SKIPPED"
-	@echo "$(srcdir)/tests/fire-test SKIPPED"
-	@echo "$(srcdir)/tests/torpedo-test SKIPPED"
-	@echo "$(srcdir)/tests/bridgefall-test SKIPPED"
-	@echo "$(srcdir)/tests/retreat-test SKIPPED"
-	@echo "$(srcdir)/tests/update-test SKIPPED"
-	@echo "$(srcdir)/tests/version-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/smoke-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/actofgod-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/build-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/load-tend-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/navi-march-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/fire-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/torpedo-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/bridgefall-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/retreat-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/update-test SKIPPED"
+	@echo "TEST $(srcdir)/tests/version-test SKIPPED"
 endif
-	$(srcdir)/tests/empdump-test $(srcdir)
+	$(call run-test, $(srcdir)/tests/empdump-test)
 
 
 ### Implicit rules

@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  *
  *  Known contributors to this file:
  *     Doug Hay, 1998
- *     Markus Armbruster, 2004-2014
+ *     Markus Armbruster, 2004-2020
  */
 
 #ifndef MISC_H
@@ -89,6 +89,11 @@ extern void (*oops_handler)(void);
 #define BUILD_ASSERT(cond) \
     ((void)BUILD_ASSERT_ONE(cond))
 
+/*
+ * Number of elements in ARRAY.
+ */
+#define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
+
 void exit_nomem(void) ATTRIBUTE((noreturn));
 
 	/* return codes from command routines */
@@ -102,9 +107,5 @@ extern char *ugetstring(char *prompt, char buf[]);
 
 extern char *prbuf(char *format, ...)
     ATTRIBUTE((format (printf, 1, 2)));
-
-#define AGREE_FREE	0
-#define AGREE_PROPOSED	1
-#define AGREE_SIGNED	2
 
 #endif

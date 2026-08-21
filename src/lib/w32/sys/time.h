@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -33,9 +33,15 @@
 #ifndef SYS_TIME_H
 #define SYS_TIME_H
 
+#ifdef _MSC_VER
+
 /* include winsock2.h thru sys/socket.h to get struct timeval */
 #include "sys/socket.h"
 
 extern int gettimeofday(struct timeval *tv, void *tz);
+
+#else  /* !_MSC_VER */
+#include_next <sys/time.h>
+#endif
 
 #endif /* SYS_TIME_H */

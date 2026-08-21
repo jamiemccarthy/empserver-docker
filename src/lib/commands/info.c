@@ -1,6 +1,6 @@
 /*
  *  Empire - A multi-player, client/server Internet based war game.
- *  Copyright (C) 1986-2017, Dave Pare, Jeff Bailey, Thomas Ruschak,
+ *  Copyright (C) 1986-2021, Dave Pare, Jeff Bailey, Thomas Ruschak,
  *                Ken Stevens, Steve McClure, Markus Armbruster
  *
  *  Empire is free software: you can redistribute it and/or modify
@@ -40,7 +40,10 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#if !defined(_WIN32)
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <strings.h>
 #include <dirent.h>
 #endif
 #include "commands.h"
@@ -62,7 +65,7 @@ lowerit(char *buf, int n, char *orig)
 #if !defined(_WIN32)
 
 int
-info(void)
+c_info(void)
 {
     char buf[255];
     FILE *fp;
@@ -144,7 +147,7 @@ info(void)
 	fclose(fp);
 	return RET_FAIL;
     }
-    if ((statb.st_mode & S_IFREG) == 0) {
+    if (!S_ISREG(statb.st_mode)) {
 	pr("Error reading info file for %s\n", name);
 	logerror("The info file \"%s\" is not regular file\n", filename);
 	fclose(fp);
@@ -158,7 +161,7 @@ info(void)
 }
 
 int
-apro(void)
+c_apropos(void)
 {
     FILE *fp;
     char *name, *lbp;
@@ -219,7 +222,7 @@ apro(void)
 		fclose(fp);
 		continue;
 	    }
-	    if ((statb.st_mode & S_IFREG) == 0) {
+	    if (!S_ISREG(statb.st_mode)) {
 		logerror("The info file \"%s\" is not regular file\n",
 			 filename);
 		fclose(fp);
@@ -270,7 +273,7 @@ apro(void)
 #else  /* _WIN32 */
 
 int
-info(void)
+c_info(void)
 {
     char buf[255];
     FILE *fp;
@@ -383,7 +386,7 @@ info(void)
 }
 
 int
-apro(void)
+c_apropos(void)
 {
     HANDLE hDir;
     WIN32_FIND_DATA fData;

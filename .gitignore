@@ -63,3 +63,7 @@
 *.rej
 *~
 *.swp
+
+# Visual Studio Directories for building
+/.vs
+/Empire
