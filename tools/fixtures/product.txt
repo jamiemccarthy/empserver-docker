@@ -1,0 +1,17 @@
+XDUMP product 1786879295
+0 "iron\040ore" "iron" -1 -1 -1 0 0 0 1 5 -1 0 45 0 -1 0 0
+1 "gold\040dust" "dust" -1 -1 -1 0 0 0 1 6 -1 0 46 20 -1 0 0
+2 "food" "food" -1 -1 -1 0 0 0 1 8 -1 0 47 0 0 -10 10
+3 "oil" "oil" -1 -1 -1 0 0 0 1 9 -1 0 48 10 0 -10 10
+4 "radioactive\040materials" "rad" -1 -1 -1 0 0 0 1 13 -1 2 49 35 0 40 10
+5 "shells" "shells" 10 11 -1 2 1 0 3 2 -1 3 0 0 0 20 10
+6 "guns" "guns" 9 10 11 1 5 10 16 3 -1 30 0 0 0 20 10
+7 "petrol" "petrol" 9 -1 -1 1 0 0 1 4 -1 1 0 0 0 20 10
+8 "gold\040bars" "bars" 6 -1 -1 5 0 0 5 7 -1 10 0 0 -1 0 0
+9 "light\040construction\040materials" "lcm" 5 -1 -1 1 0 0 1 10 -1 0 0 0 0 -10 10
+10 "heavy\040construction\040materials" "hcm" 5 -1 -1 2 0 0 2 11 -1 0 0 0 0 -10 10
+11 "technological\040breakthroughs" "tech" 6 9 10 1 5 10 16 -1 0 300 0 0 2 5 10
+12 "medical\040discoveries" "medical" 6 9 10 1 5 10 16 -1 1 90 0 0 2 5 10
+13 "a\040class\040of\040graduates" "edu" 10 -1 -1 1 0 0 1 -1 2 9 0 0 -1 0 0
+14 "happy\040strollers" "happy" 10 -1 -1 1 0 0 1 -1 3 9 0 0 -1 0 0
+/15

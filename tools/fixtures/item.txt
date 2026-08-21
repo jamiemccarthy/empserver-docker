@@ -1,0 +1,16 @@
+XDUMP item 1786879295
+0 "civilians" "c" 50 0 1 1 10 10 10 10 4
+1 "military" "m" 100 1 1 1 1 1 1 1 20
+2 "shells" "s" 125 1 1 1 1 10 1 1 80
+3 "guns" "g" 950 1 10 1 1 10 1 1 100
+4 "petrol" "p" 7 1 1 1 1 10 1 1 50
+5 "iron\040ore" "i" 10 1 1 1 1 10 1 1 100
+6 "dust\040(gold)" "d" 200 1 5 1 1 10 1 1 100
+7 "bars\040of\040gold" "b" 2500 1 50 1 1 5 1 4 200
+8 "food" "f" 0 1 1 1 1 10 1 1 2
+9 "oil" "o" 50 1 1 1 1 10 1 1 50
+10 "light\040products" "l" 20 1 1 1 1 10 1 1 100
+11 "heavy\040products" "h" 40 1 1 1 1 10 1 1 100
+12 "uncompensated\040workers" "u" 50 1 2 1 1 2 1 1 2
+13 "radioactive\040materials" "r" 50 1 8 1 1 10 1 1 1000
+/14

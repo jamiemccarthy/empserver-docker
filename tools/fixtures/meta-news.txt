@@ -1,0 +1,8 @@
+XDUMP meta news 1786879295
+"actor" 1 0 0 8
+"action" 1 0 0 26
+"victim" 1 0 0 8
+"times" 1 0 0 -1
+"duration" 1 0 0 -1
+"time" 1 0 0 -1
+/6

@@ -1,0 +1,33 @@
+XDUMP meta sect-chr 1786879295
+"uid" 1 0 0 21
+"name" 3 0 0 -1
+"mnem" 3 0 0 -1
+"terrain" 1 0 0 21
+"prd" 1 0 0 20
+"peffic" 1 0 0 -1
+"mob0" 2 0 0 -1
+"mob1" 2 0 0 -1
+"nav" 1 0 0 50
+"pkg" 1 0 0 43
+"ostr" 2 0 0 -1
+"dstr" 2 0 0 -1
+"c_build" 1 0 0 -1
+"m_build" 1 0 0 -1
+"s_build" 1 0 0 -1
+"g_build" 1 0 0 -1
+"p_build" 1 0 0 -1
+"i_build" 1 0 0 -1
+"d_build" 1 0 0 -1
+"b_build" 1 0 0 -1
+"f_build" 1 0 0 -1
+"o_build" 1 0 0 -1
+"l_build" 1 0 0 -1
+"h_build" 1 0 0 -1
+"u_build" 1 0 0 -1
+"r_build" 1 0 0 -1
+"bwork" 1 0 0 -1
+"cost" 1 0 0 -1
+"maint" 1 0 0 -1
+"maxpop" 1 0 0 -1
+"flags" 1 8 0 51
+/31

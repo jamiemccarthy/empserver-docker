@@ -1,0 +1,8 @@
+XDUMP nation-status 1786879295
+0 "unused"
+1 "new"
+2 "visitor"
+3 "sanctuary"
+4 "active"
+5 "deity"
+/6

@@ -1,0 +1,29 @@
+XDUMP meta nat 1786879295
+"cnum" 1 0 0 8
+"stat" 1 0 0 41
+"flags" 1 9 0 38
+"cname" 3 0 0 -1
+"passwd" 3 1 0 -1
+"ip" 3 1 0 -1
+"userid" 3 1 0 -1
+"xcap" 1 1 0 -1
+"ycap" 1 1 0 -1
+"xorg" 1 1 0 -1
+"yorg" 1 1 0 -1
+"update" 1 1 0 -1
+"tgms" 1 1 0 -1
+"ann" 1 1 0 -1
+"timeused" 1 1 0 -1
+"btu" 1 1 0 -1
+"access" 1 1 0 -1
+"milreserve" 1 1 0 -1
+"money" 1 1 0 -1
+"login" 1 1 0 -1
+"logout" 1 1 0 -1
+"newstim" 1 1 0 -1
+"annotim" 1 1 0 -1
+"tech" 2 1 0 -1
+"research" 2 1 0 -1
+"education" 2 1 0 -1
+"happiness" 2 1 0 -1
+/27
