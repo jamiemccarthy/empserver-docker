@@ -4,9 +4,12 @@
 # Everything here is idempotent: if /usr/local/var/empire/sector already
 # exists, the volume holds a live game and we leave it alone.
 #
-# Country creation is NOT done here.  newcap_script is left in the config
-# directory for the gateway to run over the protocol as POGO, so that country
-# passwords are generated outside the image and never land in a build layer.
+# Country creation is NOT done here, so that country passwords are generated
+# outside the image and never land in a build layer. fairland's newcap_script
+# is written into the data directory rather than the config directory: it
+# describes this particular world, so it belongs on the volume that holds it,
+# and the gateway mounts that volume read-only to find out where each capital
+# goes.
 set -e
 
 data=/usr/local/var/empire
@@ -36,10 +39,10 @@ if [ ! -e "$data/sector" ]; then
     # shellcheck disable=SC2086
     /usr/local/sbin/fairland -q \
         ${EMPIRE_SEED:+-R $EMPIRE_SEED} \
-        -s "$etc/newcap_script" \
+        -s "$data/newcap_script" \
         "$EMPIRE_CONTINENTS" "$EMPIRE_CONTINENT_SIZE" \
         "$EMPIRE_ISLANDS" "$EMPIRE_ISLAND_SIZE"
-    echo "entrypoint: world created; $etc/newcap_script is ready to run"
+    echo "entrypoint: world created; capitals listed in $data/newcap_script"
 fi
 
 exec "$@"
