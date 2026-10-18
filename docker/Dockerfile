@@ -52,10 +52,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=build /usr/local /usr/local
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
+# Everything runs as an unprivileged user with a fixed uid, so whatever runs
+# inside the container can't use root's rights.  The server needs none: it
+# listens above 1024, never changes user, and after chdir() to the data
+# directory writes nothing anywhere else (nor do `files` and `fairland`).
+#
+# The directories it writes are created here and owned by that user.  An
+# empty named volume mounted on one takes the directory's owner the first
+# time, so a new game's volumes start out writable with no extra step.
+#   /usr/local/var/empire  game data
+#   /backup                where playempire's pre-update hook writes archives
+#   /volume                where playempire's short-lived helper containers
+#                          mount a game's volume to write or read files in it
+# The config directory stays root-owned: the server only reads it.
+#
+# A host directory mounted as the data directory keeps the host's owner.
+# Docker Desktop and Rancher Desktop on macOS let the container write to it
+# anyway; on a Linux host, `chown -R 10001:10001` it first, or run with
+# `--user "$(id -u):$(id -g)"`.
+RUN groupadd --gid 10001 empire \
+    && useradd --uid 10001 --gid empire --no-create-home --home-dir /nonexistent \
+         --shell /usr/sbin/nologin empire \
+    && mkdir -p /usr/local/var/empire /backup /volume \
+    && chown empire:empire /usr/local/var/empire /backup /volume
+
 # Game data.  The server assumes exclusive access to this directory; nothing
 # else may read or write it while emp_server is running.  See doc/backups.
 VOLUME ["/usr/local/var/empire"]
 EXPOSE 6665
+
+USER empire
 
 # -d keeps the process in the foreground.  It also sets the internal-error
 # handler to abort(), so -E must follow it to put that back.
