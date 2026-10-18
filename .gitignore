@@ -55,6 +55,9 @@
 
 # Docker
 /docker/built-usr-local
+# The game data directory, bind-mounted into the container (see CLAUDE.md
+# § "Build and run"). It holds country passwords in clear text — never commit it.
+/docker/data
 
 # Generic junk
 *.orig
