@@ -283,13 +283,13 @@ plane that can help adds its damage/100 to the support. For example, if you
 were attacking a sector, and a friendly battleship was close enough to fire
 there, it could support you. If it would normally do 23% damage when firing,
 it would add +.23 support, making your support number 1.23. The enemy also
-gets support from all his stuff.
+gets support from their own ships, forts, artillery and planes.
 .s1
 When all support is totaled, the attacker strength is multiplied by
 the attacker's support to get the total attacker strength. The defender's
 total strength is determined similarly. Both sides have their strength modified
 by the terrain. (show sector stats will show the defensive value of a sector)
-He can also get support
+The defender can also get support
 by having mine-fields in the sector (see info \*Qlmine\*U and info
 \*QAttacking\*U for more information). Planes support only if assigned to a
 support mission. See info \*Qmission\*U for information on support missions.
@@ -305,9 +305,9 @@ Retreating attacking units go back to the sector they came from. Defending
 units will attempt to retreat to an adjacent owned sector. If there are none,
 the unit will take extra damage and continue fighting.
 .s1
-If the attacker wins, he captures the sector, and his mil/units will
-move into the sector if he ordered that. If the defender wins a combat,
-his units in the sector stay there. His reacting defending units that did not
+If the attacker wins, they capture the sector, and their mil/units will
+move into the sector if they ordered that. If the defender wins a combat,
+their units in the sector stay there. Their reacting defending units that did not
 fail a morale check return to their starting point. Defending units who
 started in the sector stay in the sector.
 .s1

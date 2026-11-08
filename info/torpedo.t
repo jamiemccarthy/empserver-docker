@@ -54,12 +54,12 @@ Victims of submarine torpedoes get only told that a submarine
 attacked, not which one (so you can deny it).
 .s1
 The victim's only automatic protection against sub attacks is that any
-ship of his/hers that is capable of retaliating with depth charges or
+ship of theirs that is capable of retaliating with depth charges or
 torpedoes will do so.  This will reveal number and position of your
 submarine.
 .s1
 Against surface ships launching torpedo attacks, the victim gets to fire
-all his ships & sectors within range at the attackers BEFORE the attackers
+all their ships & sectors within range at the attackers BEFORE the attackers
 get to fire. Damage done by all defending ships is divided evenly over all
 attacking ships.
 .s1

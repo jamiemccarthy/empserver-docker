@@ -83,7 +83,7 @@ War Zones
 .in +0.3i
 .s1
 It makes it much easier if the player doesn't
-have to do anything to keep his country running,
+have to do anything to keep their country running,
 but can instead do the things that are of interest.
 There's also the problem of what to do in an invasion.
 I guess if invaded I just accept the damage,

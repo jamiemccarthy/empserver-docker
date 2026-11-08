@@ -76,7 +76,7 @@ c_assault(void)
 	return RET_FAIL;
 
     /*
-     * Ask the assaulter what he wants to assault with
+     * Ask the assaulter what they want to assault with
      */
 
     if ((off->shp_uid =
@@ -100,7 +100,7 @@ c_assault(void)
 	return RET_OK;
     }
 
-    /* Ask the player what he wants to assault with */
+    /* Ask the player what they want to assault with */
 
     att_ask_offense(A_ASSAULT, off, def, &olist, &a_spy, &a_engineer);
     if (att_abort(A_ASSAULT, off, def)) {

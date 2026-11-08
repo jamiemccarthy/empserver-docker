@@ -126,7 +126,7 @@ defense_val(struct lndstr *lp)
     value *= ((double)land_mob_max + lp->lnd_harden) / land_mob_max;
 
     /* If there are military on the unit, you get at least a 1
-       man defensive unit, except for spies */
+       mil defensive unit, except for spies */
     if (value < 1.0 && men > 0 && !(lcp->l_flags & L_SPY))
 	return 1;
 

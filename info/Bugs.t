@@ -24,7 +24,7 @@ Two cooperative countries can move commodities around at no
 mobility cost using the market.
 .s1
 You can collapse enemy bridges by making a lightning raid on
-his bridgeheads and redesignating them,
+their bridgeheads and redesignating them,
 even if you only hold the bridgehead for a short time.
 .s1
 Player input lines are silently truncated after 1023 characters.

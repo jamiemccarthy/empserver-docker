@@ -49,7 +49,7 @@ If you scuttle a trade ship in the harbor you do not own, you get a 20% bonus
 (applied after the value is multiplied by the return rate above), AND the
 person owning the harbor gets 10% of the cash you make as a bonus (the amount
 before the +20% bonus is applied)
-You still get the full amount, but he makes money as well.
+You still get the full amount, but they make money as well.
 (Peaceful trade enriches BOTH countries more than trading only internally).
 For the devious, no, being allied with yourself does not mean you get +20% when
 scuttling in your own harbors.

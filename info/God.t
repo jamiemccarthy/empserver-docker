@@ -17,10 +17,10 @@ There are several things a deity should take into account.
 .s1
 .L 1)
 Bug policy.
-When a player says that a bug bit him, how do you handle it?
+When a player says that a bug bit them, how do you handle it?
 Since I used to hack on the game at the same time players would play,
 I used to have a \*Qnasty\*U bug policy.
-That is, if a bug bites a player, he loses.
+That is, if a bug bites a player, that player loses.
 It is very difficult to verify if a player
 \*Qreally did lose those 1000 gold bars\*U from that bank
 because of a bug.
@@ -50,7 +50,7 @@ or by giving a teensy bit of assistance is BAD.
 Empire is NOT a game of socialist care for the needy;
 it's more like survival of the fittest.
 Players should sink or swim on their own.
-If you help a novice, you're deliberately hurting his opponent.
+If you help a novice, you're deliberately hurting their opponent.
 Some players will lose,
 and as Deity you'll have to stand by and watch this happen.
 .s1

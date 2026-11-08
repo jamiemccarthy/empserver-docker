@@ -117,8 +117,8 @@ Implementation Notes: My Opportunity to Spout Empire Technical Jargon
 	Any files that are loaded into core (like the sector, map, nation,
 	ship, plane, and land unit files) are shared between all the threads.
 	That's good news.  If your thread modifies another player's nat_tgms
-	field, he'll see it next time through the command loop, without
-	anyone having to read anything from disk!  Furthermore, he'll have
+	field, they'll see it next time through the command loop, without
+	anyone having to read anything from disk!  Furthermore, they'll have
 	no delay in zeroing out that field, so there won't be the annoying
 	double telegram reports which were caused by the delay induced by
 	emp_tm.

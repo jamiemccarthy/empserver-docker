@@ -96,7 +96,7 @@ c_lboard(void)
     /* Show what we're boarding */
     att_show(def);
 
-    /* Ask the player what he wants to board with */
+    /* Ask the player what they want to board with */
 
     att_ask_offense(A_LBOARD, off, def, &olist, &a_spy, &a_engineer);
     if (att_abort(A_LBOARD, off, def)) {

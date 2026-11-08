@@ -110,8 +110,7 @@ c_buy(void)
 	return RET_FAIL;
     }
 /*  check to see if all of the bids that this player has out plus this new bid
-    would make him go broke.  Ken, I ought to skin you alive for making me code
-    this part up.*/
+    would make them go broke. */
     tally = 0.0;
     for (n = 0; gettrade(n, &tmpt); n++) {
 	if (!tmpt.trd_owner)

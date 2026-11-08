@@ -84,7 +84,7 @@ c_shark(void)
 	return RET_FAIL;
     } else {
 	wu(0, loan.l_lonee,
-	   "%s bought loan #%d.  You now owe him!\n",
+	   "%s bought loan #%d.  You now owe them!\n",
 	   cname(player->cnum), arg);
 	wu(0, loan.l_loner,
 	   "%s bought loan #%d out from under you for %d\n",

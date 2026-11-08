@@ -69,7 +69,7 @@ c_board(void)
 	return RET_SYN;
 
     /*
-     * Ask the boarder what he wants to board with
+     * Ask the boarder what they want to board with
      */
 
     if (!(p = getstarg(player->argp[2], "Boarding party from? ", buf)))
@@ -127,7 +127,7 @@ c_board(void)
     /* Show what we're boarding */
     att_show(def);
 
-    /* Ask the player what he wants to board with */
+    /* Ask the player what they want to board with */
 
     att_ask_offense(A_BOARD, off, def, &olist, &a_spy, &a_engineer);
     if (att_abort(A_BOARD, off, def)) {

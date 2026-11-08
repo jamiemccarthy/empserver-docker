@@ -34,8 +34,8 @@ battle against the original owner, not the new owner.
 In addition, ships, land units, planes and nuclear stockpiles are
 not collected.  Those remain the property of the owner of the sector.
 .s1
-Standing military in the sector are reduced to 1 and he becomes the
-latest and greatest addition to your standing army.
+Standing military in the sector are reduced to 1, and that soldier
+becomes the latest addition to your army.
 .s1
 Mobility of the collected sector remains unchanged.
 .s1

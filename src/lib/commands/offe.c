@@ -117,7 +117,7 @@ do_loan(void)
     while (nxtitem(&nstr, &loan)) {
 	if ((loan.l_status == LS_SIGNED) && (loan.l_lonee == player->cnum)
 	    && (loan.l_loner == recipient)) {
-	    pr("You already owe HIM money - how about repaying your loan?\n");
+	    pr("You already owe THEM money - how about repaying your loan?\n");
 	    return RET_FAIL;
 	}
     }

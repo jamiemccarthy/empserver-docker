@@ -191,7 +191,7 @@ cons_postpone(struct ltcomstr *ltcp)
 
 /*
  * Accept a loan.  If the offering country has too little money,
- * leave him $100 left and offer the rest.  Return RET_OK on
+ * leave it $100 and offer the rest.  Return RET_OK on
  * success, anything else on error.
  */
 static int
@@ -212,7 +212,7 @@ loan_accept(struct ltcomstr *ltcp)
 	pr("can't read loan; get help!\n");
 	return RET_FAIL;
     }
-    if (lp->l_status == LS_FREE) {	/* other guy retratcted already */
+    if (lp->l_status == LS_FREE) {	/* the other country retracted already */
 	late(ltcp);
 	return RET_OK;
     }
@@ -230,7 +230,7 @@ loan_accept(struct ltcomstr *ltcp)
 	}
     }
     lender = getnatp(ltcp->proposer);
-    if (lender->nat_money < lp->l_amtdue) {	/* other guy is poor */
+    if (lender->nat_money < lp->l_amtdue) {	/* the other country is poor */
 	lp->l_amtdue = lender->nat_money - 100;
 	pr("%s no longer has the funds.\n", cname(ltcp->proposer));
 	if (lp->l_amtdue <= 0)

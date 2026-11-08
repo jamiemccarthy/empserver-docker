@@ -58,7 +58,7 @@ c_relations(void)
     pr("\t%s Diplomatic Relations Report\t", cname(as));
     prdate();
     pr("\n  Formal Relations         %5s      theirs\n",
-       player->cnum == as ? "yours" : "his");
+       player->cnum == as ? "yours" : "its");
     for (cn = 1; cn < MAXNOC; cn++) {
 	if (!(np = getnatp(cn)))
 	    break;

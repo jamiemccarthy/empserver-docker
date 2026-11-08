@@ -10,7 +10,7 @@ it can do anything from creating a civilian
 (as was the case with the first civilian),
 to literally moving mountains.
 .s1
-Despite this great power The Deity keeps his hands out of the game
+Despite this great power The Deity keeps out of the game
 and country #0 only gets involved when there is a problem with
 the source code, or prohibited activity is suspected.
 The most common form of prayer

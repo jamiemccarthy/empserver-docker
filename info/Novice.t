@@ -55,7 +55,7 @@ Everybody likes to get telegrams;
 the telegram facility gives you the chance to make friends,
 influence people, and have fun role-playing your country.
 If you get to know somebody,
-you may not be attacked because you come across as a nice guy.
+you may not be attacked because you come across as friendly.
 Of course, if you sound like a bozo, you may get stepped on.
 .s1
 Establish a definite border with your neighbors by inhabiting

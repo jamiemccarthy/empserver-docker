@@ -18,7 +18,7 @@ three outcomes for this command.
    1)  The mil kill all the che.  The sector is cleared (for now).
    2)  The che kill the mil.  The sector then returns to the old owner with
        most or all of the che reverting to mil.  The old owner is sent a
-       telegram informing him of the event.
+       telegram informing them of the event.
    3)  The battle is suspended when the mobility in the sector is used up.
        Each mil or che killed uses one mobility point.
 .FI

@@ -178,7 +178,7 @@ divine_load_unload(struct empobj *unit, int type, int uid, char *act)
 	   "%s %s %s #%d by an act of %s!\n",
 	   unit_nameof(unit), act, ef_nameof(type), uid,
 	   cname(player->cnum));
-    /* carrier owner could differ; can't be bothered to report to him */
+    /* carrier owner could differ; can't be bothered to report to the owner */
 }
 
 void

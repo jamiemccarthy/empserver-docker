@@ -98,7 +98,7 @@ c_attack(void)
     }
     off->last = last;
 
-    /* Ask the player what he wants to attack with */
+    /* Ask the player what they want to attack with */
 
     att_ask_offense(A_ATTACK, off, def, &olist, &a_spy, &a_engineer);
     if (att_abort(A_ATTACK, off, def)) {

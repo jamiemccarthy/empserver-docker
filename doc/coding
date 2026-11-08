@@ -414,7 +414,7 @@ whether a thread operation yields is documented in empthread.h.
 However, the operation may be buried in library code.
 
 In particular, player input may yield.  Player output may yield only
-if it goes to the current player, and his last command doesn't have
+if it goes to the current player, and that player's last command doesn't have
 the C_MOD flag.  You can use this to simplify command code: set C_MOD
 if you don't want to worry about yield on output.  This is commonly
 done for commands that modify game state.
