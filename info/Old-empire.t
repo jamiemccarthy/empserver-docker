@@ -203,11 +203,8 @@ Terrorists!  -
 (real trouble makers, but great for setting on your enemies -
 they blow up things and convert followers!)
 .s1
-SHOOT - it is now possible to SHOOT your civilians
-(captured enemy ones) or your own :-)
-God knows why you would but...
-sometimes the conquered people are REAL radical
-and it DOES become necessary
+SHOOT - you can now shoot civilians (captured ones or your own),
+for example to put down unrest in a conquered sector.
 .s1
 SELL - you can sell your goods on the OPEN Market -
 and set PRICE MULTIPLIERS so that your enemies

@@ -11,6 +11,6 @@ XDUMP item 1786879295
 9 "oil" "o" 50 1 1 1 1 10 1 1 50
 10 "light\040products" "l" 20 1 1 1 1 10 1 1 100
 11 "heavy\040products" "h" 40 1 1 1 1 10 1 1 100
-12 "uncompensated\040workers" "u" 50 1 2 1 1 2 1 1 2
+12 "unfree\040workers" "u" 50 1 2 1 1 2 1 1 2
 13 "radioactive\040materials" "r" 50 1 8 1 1 10 1 1 1000
 /14

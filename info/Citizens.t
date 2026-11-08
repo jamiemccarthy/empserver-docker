@@ -40,14 +40,10 @@ Occupied civilians will not move,
 and friendly civilians cannot enter these sectors.
 In addition, occupied civilians will not serve in the armed forces.
 .s1
-If the thought of not being able
-to move conquered populace bothers you,
-then you have the option of converting these conquered people
-into uncompensated workers,
-involving the expenditure of BTUs and money
-(for the paperwork).
-If all the conquered people in one sector are converted to uw's,
-then the sector is then marked as yours.
+You can convert the conquered civilians into unfree workers (uw),
+which costs BTUs and money.
+When all of a sector's conquered civilians are uw,
+the sector becomes yours.
 .s1
 If the people in a sector are unhappy
 (due to starvation, subversion, or lack of happiness)

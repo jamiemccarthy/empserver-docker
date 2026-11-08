@@ -46,7 +46,7 @@ civilians in the sector
 .L mil
 military in the sector
 .L uw
-uncompensated workers in the sector
+unfree workers in the sector
 .L desig
 designation of the sector
 .L effic
@@ -80,7 +80,7 @@ how much food people eat
 .L obrate
 birth rate
 .L uwbrate
-uncompensated worker birth rate
+unfree worker birth rate
 .L babyeat
 how much babies eat growing up
 .L bankint

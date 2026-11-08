@@ -28,9 +28,9 @@ Particular guerrilla bands will fight to the death,
 or until you dissolve in disgust.
 .s1
 Guerrillas will attempt to \*Qrecruit\*U new followers
-from semi-loyal sectors and from the uncompensated worker population.
+from semi-loyal sectors and from the unfree worker population.
 Loyal civilians will resist these recruiting drives,
-but uncompensated workers will always flock to the banner
+but unfree workers will always flock to the banner
 of the guerrilla warrior.
 .s1
 The renowned guerrilla fighter Colonel (later Captain) Batguano

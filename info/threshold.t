@@ -18,7 +18,7 @@ In the syntax,
 .NF
 c	civilians
 m	military
-u	uncompensated workers
+u	unfree workers
 f       food
 s       shells
 g       guns

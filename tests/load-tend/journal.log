@@ -2178,8 +2178,8 @@
     Play#1 output Play#1 6 0 416
     Play#1 input tend u 150/151 -1 t
     Play#1 command tend
-    Play#1 output Play#1 1 4 total uncompensated workers transferred to cs   cargo ship (#150)
-    Play#1 output Play#1 1 4 total uncompensated workers transferred to cs   cargo ship (#151)
+    Play#1 output Play#1 1 4 total unfree workers transferred to cs   cargo ship (#150)
+    Play#1 output Play#1 1 4 total unfree workers transferred to cs   cargo ship (#151)
     Play#1 output Play#1 6 0 415
     Play#1 input tend f 166 1 160/162/163/164
     Play#1 command tend
@@ -2254,14 +2254,14 @@
     Play#1 output Play#1 6 0 403
     Play#1 input tend u 150 1 170/171
     Play#1 command tend
-    Play#1 output Play#1 1 frg  frigate (#170) cannot hold any uncompensated workers
-    Play#1 output Play#1 1 sb   submarine (#171) cannot hold any uncompensated workers
-    Play#1 output Play#1 1 0 total uncompensated workers transferred off of cs   cargo ship (#150)
+    Play#1 output Play#1 1 frg  frigate (#170) cannot hold any unfree workers
+    Play#1 output Play#1 1 sb   submarine (#171) cannot hold any unfree workers
+    Play#1 output Play#1 1 0 total unfree workers transferred off of cs   cargo ship (#150)
     Play#1 output Play#1 6 0 402
     Play#1 input tend u 170/171 -1 150
     Play#1 command tend
-    Play#1 output Play#1 1 frg  frigate (#170) cannot hold any uncompensated workers
-    Play#1 output Play#1 1 sb   submarine (#171) cannot hold any uncompensated workers
+    Play#1 output Play#1 1 frg  frigate (#170) cannot hold any unfree workers
+    Play#1 output Play#1 1 sb   submarine (#171) cannot hold any unfree workers
     Play#1 output Play#1 6 0 401
     Play#1 input tend s 150/152 5 t
     Play#1 command tend

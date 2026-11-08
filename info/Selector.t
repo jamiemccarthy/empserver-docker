@@ -27,7 +27,7 @@ light construction materials
 .L hcm
 heavy construction materials
 .L uw
-uncompensated workers
+unfree workers
 .L rad
 radioactive materials
 .in

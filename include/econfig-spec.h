@@ -321,7 +321,7 @@ EMPCF_COMMENT("# Applies to sector takeover, ship build, plane or land unit buil
 
 EMPCF_COMMENT("\n\n### Populace")
 EMPCFBOTH("uwbrate", uwbrate, double, NSC_DOUBLE, 0,
-    "Birth rate for uncompensated workers")
+    "Birth rate for unfree workers")
 EMPCFBOTH("money_civ", money_civ, double, NSC_DOUBLE, 0,
     "Money gained from taxes on a civilian in one ETU")
 EMPCFBOTH("money_mil", money_mil, double, NSC_DOUBLE, 0,
@@ -329,7 +329,7 @@ EMPCFBOTH("money_mil", money_mil, double, NSC_DOUBLE, 0,
 EMPCFBOTH("money_res", money_res, double, NSC_DOUBLE, 0,
     "Money gained from taxes on a soldier on active reserve in one ETU")
 EMPCFBOTH("money_uw", money_uw, double, NSC_DOUBLE, 0,
-    "Money gained from taxes on an uncompensated worker in one ETU")
+    "Money gained from taxes on an unfree worker in one ETU")
 EMPCFBOTH("babyeat", babyeat, double, NSC_DOUBLE, 0,
     "Amount of food to mature 1 baby into a civilian")
 EMPCFBOTH("bankint", bankint, double, NSC_DOUBLE, 0,

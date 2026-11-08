@@ -204,7 +204,7 @@ designating forts, and will ask you "are you sure?" if you are going
 to go broke from it - Ken Stevens
 A temporary input buffer needed a size increase in buil.c - Ken Stevens
 Wish list item c5! - fixes it so you are told how much it will cost when
-you are designating sectors, or converting civs to slaves, and it warns
+you are designating sectors, or enslaving civilians, and it warns
 you if you are going to go broke from it.  The server will also not let you
 build, harden, or upgrade anything you cannot afford - Ken Stevens
 fixed -h parameter on server ( caused crash ) - Ken Huisman

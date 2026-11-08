@@ -1,9 +1,9 @@
 .TH Command CONVERT
-.NA convert "Change conquered civilians into uncompensated workers"
+.NA convert "Change conquered civilians into unfree workers"
 .LV Basic
 .SY "convert <SECTS> <NUMBER>"
 The convert command converts \*Qenemy\*U (captured) populace into
-uncompensated workers.
+unfree workers.
 If the sector is not actually conquered, no civilians will be
 converted.  If you convert all the civs in a sector, then the sector
 is no longer occupied (i.e. you become the "oldowner" of the sector).
@@ -12,7 +12,7 @@ After the program has collected any necessary information
 it will list each sector where civilians are converted.
 .s1
 Note: you must have enough military in the sectors to force the
-populace to become uncompensated workers -- about 10%. Land units
+populace to become unfree workers -- about 10%. Land units
 count toward this at a value equal to the number of mil required
 to build them. Security units are even more efficient, counting for
 more than their base value, and increase the number converted.

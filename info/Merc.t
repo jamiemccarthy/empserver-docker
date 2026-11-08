@@ -13,9 +13,9 @@ to remain in the sea sector and could be retrieved by either rebuilding
 the bridge or moving them onto a 100% highway.  This has been fixed so
 that any planes upon a bridgespan which falls will be destroyed.
 
-Uncompensated Workers
+Unfree Workers
 
-Uncompensated workers were not paying taxes, even though the version command
+Unfree workers were not paying taxes, even though the version command
 provided a tax rate for them.  They now pay the taxes that are shown.
 
 .SY "reject reject announcements *"

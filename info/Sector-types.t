@@ -35,7 +35,7 @@ In a pinch, mountains can be used as capital.  They generate
 very few BTUs, and represent being 'holed up in the mountains',
 perhaps like Pancho Villa.
 Mountains typically hold only 1/10th of the civilians and
-uncompensated workers that other sectors do.
+unfree workers that other sectors do.
 .s1
 SANCTUARY - Sanctuary sectors are created when
 a new nation is created.
@@ -57,7 +57,7 @@ designate it as something else once you own it.
 PLAINS - Plains sectors form another natural barrier that cannot
 be redesignated.  They can be occupied and moved through however.
 Plains typically hold only 1/10th of the civilians and
-uncompensated workers that other sectors do.
+unfree workers that other sectors do.
 .s1
 CAPITAL/CITY - These sectors can serve as your capital.  You'll be
 quite helpless without a capital, as many commands require you to have
@@ -319,7 +319,7 @@ and 100%.
 Some sector types are more adept at moving certain commodities: the
 mobility cost is divided by a packing bonus.
 .s1
-Column max pop shows how many civilians and uncompensated workers the
+Column max pop shows how many civilians and unfree workers the
 sector type can hold.
 .s1
 Finally, to check out what sectors can do, use:

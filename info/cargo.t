@@ -32,7 +32,7 @@ the number of civilians on board,
 .L mil
 the number of military on board,
 .L uw
-the number of uncompensated workers on board,
+the number of unfree workers on board,
 .L sh
 the number of shells on board,
 .L gun

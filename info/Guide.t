@@ -2041,7 +2041,7 @@ User's Guide to Empire							 43
 	your gold bars into gold dust at a loss of 20% of the original amount
 	of dust put into the bars.  
 
-	Uncompensated workers are also useful for tech production, as well
+	Unfree workers are also useful for tech production, as well
 	as many other things.  However, it has been noticed that a tech
 	center with 999 uws will produce tech less efficiently than one with
 	500 uws.  The loss in efficiency is greater than what is expected 
@@ -2115,7 +2115,7 @@ Chapter 10 :-: The economy.
 	 4. Rads		  11. Petrol (2)
 	 5. Food		  12. Soldiers (6)
 	 6. Civilians		  
-	 7. Uncompensated workers
+	 7. Unfree workers
 
 	Group 3			  Group 4
 	13. Education (8)	  17. Ships (8,9)
@@ -2198,7 +2198,7 @@ PRODUCTION SIMULATION
 	doing nothing.  The way you calculate the number of civilians you have 
 	sitting around is fairly simple.  First, it is important to note that 
 	the number indicated in	the "wkfc" column is the number of civilians 
-	and uncompensated workers (UWs) you will have in the sector *after* the
+	and unfree workers (UWs) you will have in the sector *after* the
 	next update.  You need to reduce the number of civs and/or UWs in the 
 	sector to optimum *before* the next update.
 
@@ -3226,7 +3226,7 @@ Tool	    - A program used on a player's local machine to aid in there
 	      goals in Empire.  
 Update	    - A 'turn' in Empire.  Mobility is increased in sectors, 
 	      civilians multiply and eat food, military is paid for, etc.
-UW	    - Uncompensated worker.  A nicer name for slave. 
+UW	    - Unfree worker: a person who has been enslaved.
 VTOL	    - Vertical Take Off and Landing capability for planes.  Requires
 	      no runways or other developed airport like structures.
 Wasteland   - A permanent sector designation caused by a nuclear blast of
@@ -3393,7 +3393,7 @@ Missiles				Starvation		  26,46,51,54
 	Against planes 		   57	Telegrams			   17
 	Against airbases 	   59	Thresholds 		  50-53,56,60
 	Against ships 	   	   62	Tools 			 7,8,21,63-64
-Mobility 	    24,25,26,49,51,61	Uncompensated workers 		43,46
+Mobility 	    24,25,26,49,51,61	Unfree workers 		43,46
 Mountains  			25,36	Updates	   16,21,25,26,27,36,46,51,56
 Movement 			16,20	Warehouse 26,43,48,49-51,56,59,60,61
 					Wilderness 	    20,21,22,23,24,25

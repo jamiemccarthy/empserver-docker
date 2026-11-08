@@ -81,7 +81,7 @@ c_version(void)
        1000.0 * fcrate);
     pr("1000 civilians will give birth to %.1f babies per ETU.\n",
        1000.0 * obrate);
-    pr("1000 uncompensated workers will give birth to %.1f babies.\n",
+    pr("1000 unfree workers will give birth to %.1f babies.\n",
        1000.0 * uwbrate);
     pr("In one time unit, 1000 people eat %.1f units of food.\n",
        1000.0 * eatrate);
@@ -94,7 +94,7 @@ c_version(void)
 
     pr("Banks pay $%.2f in interest per 1000 gold bars per ETU.\n",
        bankint * 1000.0);
-    pr("1000 civilians generate $%.2f, uncompensated workers $%.2f each time unit.\n",
+    pr("1000 civilians generate $%.2f, unfree workers $%.2f each time unit.\n",
        1000.0 * money_civ, 1000.0 * money_uw);
     pr("1000 active military cost $%.2f, reserves cost $%.2f.\n",
        -money_mil * 1000.0, -money_res * 1000.0);

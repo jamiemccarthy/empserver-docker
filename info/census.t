@@ -35,10 +35,10 @@ This can be controlled with the \*Qstart\*U and \*Qstop\*U commands.
 the number of mobility units, (see \*Qmove\*U)
 .L uf
 Two delivery columns corresponding to:
-uncompensated workers and food.
+unfree workers and food.
 .L uf
 Two \*Qdistribute\*U columns corresponding to:
-uncompensated workers and food.
+unfree workers and food.
 .L old
 the old owner of an occupied enemy sector.
 .L civ
@@ -46,7 +46,7 @@ the number of civilians
 .L mil
 the number of military troops
 .L uw
-the number of uncompensated workers
+the number of unfree workers
 .L food
 the amount of food
 .L work

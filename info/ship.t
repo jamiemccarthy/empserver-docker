@@ -29,7 +29,7 @@ the number of civilians on board,
 .L mil
 mil is the number of military on board,
 .L uw
-the number of uncompensated workers on board,
+the number of unfree workers on board,
 .L fd
 the amount of food on board,
 .L pn

@@ -1022,7 +1022,7 @@
     Play#0 output Play#0 6 0 640
     Play#0 input give u 10,6 1
     Play#0 command give
-    Play#0 output Play#0 1 1 uncompensated workers in 10,6
+    Play#0 output Play#0 1 1 unfree workers in 10,6
     Play#0 output Play#0 6 0 640
     Play#0 input give r 10,6 1
     Play#0 command give
@@ -1863,7 +1863,7 @@
     Play#0 output Play#0 6 0 640
     Play#0 input edit s 2 u 1
     Play#0 command edit
-    Play#0 output Play#0 1 uncompensated workers of cs   cargo ship (#2) changed from 0 to 1
+    Play#0 output Play#0 1 unfree workers of cs   cargo ship (#2) changed from 0 to 1
     Play#0 output Play#0 6 0 640
     Play#0 input edit s 2 r 1
     Play#0 command edit
@@ -1919,7 +1919,7 @@
     Play#0 output Play#0 6 0 640
     Play#0 input edit u 2 u 1
     Play#0 command edit
-    Play#0 output Play#0 1 uncompensated workers of sup  supply #2 unchanged
+    Play#0 output Play#0 1 unfree workers of sup  supply #2 unchanged
     Play#0 output Play#0 6 0 640
     Play#0 input edit u 2 r 1
     Play#0 command edit
@@ -2475,7 +2475,7 @@
     Play#0 output Play#0 1 POGO gave you 1 oil in 10,6
     Play#0 output Play#0 1 POGO gave you 1 light products in 10,6
     Play#0 output Play#0 1 POGO gave you 1 heavy products in 10,6
-    Play#0 output Play#0 1 POGO gave you 1 uncompensated workers in 10,6
+    Play#0 output Play#0 1 POGO gave you 1 unfree workers in 10,6
     Play#0 output Play#0 1 POGO gave you 1 radioactive materials in 10,6
     Play#0 output Play#0 1 lc   light cruiser (#6) given to you by an act of POGO!
     Play#0 output Play#0 1 Type of lc   light cruiser (#6) changed to hc   heavy cruiser by an act of POGO
@@ -2571,7 +2571,7 @@
     Play#0 output Play#0 1 POGO gave you 1 food in cs   cargo ship (#2)
     Play#0 output Play#0 1 POGO gave you 1 light products in cs   cargo ship (#2)
     Play#0 output Play#0 1 POGO gave you 1 heavy products in cs   cargo ship (#2)
-    Play#0 output Play#0 1 POGO gave you 1 uncompensated workers in cs   cargo ship (#2)
+    Play#0 output Play#0 1 POGO gave you 1 unfree workers in cs   cargo ship (#2)
     Play#0 output Play#0 1 POGO gave you 1 military in sup  supply #2
     Play#0 output Play#0 1 POGO gave you 1 shells in sup  supply #2
     Play#0 output Play#0 1 POGO gave you 1 guns in sup  supply #2

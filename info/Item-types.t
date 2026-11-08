@@ -23,7 +23,7 @@ mnem                in no wh ur bk deno  name
   o     50  yes   1  1  1 10  1  1   50  oil
   l     20  yes   1  1  1 10  1  1  100  light products
   h     40  yes   1  1  1 10  1  1  100  heavy products
-  u     50  yes   2  1  1  2  1  1    2  uncompensated workers
+  u     50  yes   2  1  1  2  1  1    2  unfree workers
   r     50  yes   8  1  1 10  1  1 1000  radioactive materials
 .FI
 .s1

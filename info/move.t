@@ -12,7 +12,7 @@ which uses the same syntax as move.
 .NF
 c       civilians
 m       military
-u	uncompensated workers
+u	unfree workers
 f       food
 g       guns
 s       shells

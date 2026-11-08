@@ -33,7 +33,7 @@ the delivery cutoff threshold for civilians in that sector
 .L mil
 the delivery cutoff threshold for military in that sector
 .L uw
-the delivery cutoff threshold for uncompensated workers in that sector
+the delivery cutoff threshold for unfree workers in that sector
 .L food
 the delivery cutoff threshold for food in that sector
 .L gun

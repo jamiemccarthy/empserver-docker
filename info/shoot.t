@@ -1,10 +1,10 @@
 .TH Command SHOOT
-.NA shoot "Dispose of enemy civilians or uncompensated workers"
+.NA shoot "Shoot civilians or unfree workers"
 .LV Basic
 .SY "shoot c <SECTS> <NUMBER>"
 .SY "shoot u <SECTS> <NUMBER>"
 The shoot command allows you to shoot recalcitrant civilans or
-uncompensated workers.
+unfree workers.
 In order to be able to keep the populace under control
 (i.e., not have them rebel),
 you must have one military for every ten civilians.
@@ -28,7 +28,6 @@ and it was a conquered sector,
 it will become completely controlled by you,
 and you will be notified of this fact.
 .s1
-Having security troops in the sector will make the firing squads use
-less mobility (they're enthusiastic).
+Having security troops in the sector makes the shooting use less mobility.
 .s1
 .SA "convert, Mobility, Citizens, Populace, Occupation"

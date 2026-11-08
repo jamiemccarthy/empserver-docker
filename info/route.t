@@ -12,7 +12,7 @@ The <SECTS> argument is as described in \*Qinfo syntax\*U.
 .NF
 c    civilians
 m    military
-u    uncompensated workers
+u    unfree workers
 f    food
 s    shells
 g    guns (not gold)

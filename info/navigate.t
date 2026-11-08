@@ -8,7 +8,7 @@ start in the same sector.
 .s1
 A ship must have at least one crew
 (which may be civilian or military,
-but not an uncompensated worker)
+but not an unfree worker)
 to be navigated.
 When you navigate, you see the hex of sectors around the flagship.
 .s1

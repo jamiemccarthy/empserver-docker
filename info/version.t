@@ -28,13 +28,13 @@ It takes 8.33 civilians to produce a BTU in one time unit.
 A non-aggi, 100 fertility sector can grow 0.12 food per ETU.
 1000 civilians will harvest 1.3 food per ETU.
 1000 civilians will give birth to 5.0 babies per ETU.
-1000 uncompensated workers will give birth to 2.5 babies.
+1000 unfree workers will give birth to 2.5 babies.
 In one time unit, 1000 people eat 0.5 units of food.
 1000 babies eat 6.0 units of food becoming adults.
 No food is needed!
 
 Banks pay $250.00 in interest per 1000 gold bars per ETU.
-1000 civilians generate $8.33, uncompensated workers $1.78 each time unit.
+1000 civilians generate $8.33, unfree workers $1.78 each time unit.
 1000 active military cost $83.33, reserves cost $8.33.
 Up to 50 avail can roll over an update.
 Happiness p.e. requires 1 happy stroller per 10000 civilians.

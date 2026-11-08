@@ -33,7 +33,7 @@ the distribution threshold for civilians in that sector
 .L mil
 the distribution threshold for military in that sector
 .L uw
-the distribution threshold for uncompensated workers in that sector
+the distribution threshold for unfree workers in that sector
 .L food
 the distribution threshold for food in that sector
 .L gun
