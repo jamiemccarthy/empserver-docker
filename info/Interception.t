@@ -48,7 +48,7 @@ list fights once.
 .s1
 .L "Combat values"
 .s1
-The attacker's combat value is calculated by adding up his planes attack
+The attacker's combat value is calculated by adding up their planes' attack
 value, and modifying it for efficiency, bomb-load, and stealth. The attack
 value of the plane is multiplied times the plane's efficiency, but cannot
 go below 1/2 of the plane-type's base value (as shown by show plane stats).
@@ -112,7 +112,7 @@ In our example, the attacker takes 17, the defender 13, leaving them
 at 13% and 87% efficiency, respectively. The attacker has an 67%
 chance to abort, and the defender won't.  If the attacker aborts, the
 mission is over.  Else, the attacker flies on to the next sector in
-his flight path, perhaps to have combat again.
+its flight path, perhaps to have combat again.
 .s1
 .L ABMs
 ABMs do not use the normal combat procedure. They simply have a %

@@ -121,7 +121,7 @@ get_assembly_point(char *input, struct sctstr *ap_sect, char *buf)
 
 /*
  * Find out whether planes can fly one-way to @x,@y.
- * Offer the player any carriers there.  If he chooses one, read it
+ * Offer the player any carriers there.  If they choose one, read it
  * into @target->ship.  Else read the target sector into @target->sect.
  * If planes can land there, set required plane flags in *@flagsp, and
  * return 0.  Else return -1.

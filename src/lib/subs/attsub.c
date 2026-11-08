@@ -763,9 +763,9 @@ att_mobcost(natid attacker, struct combat *def, int mobtype)
     /*
      * We want the cost to move/march into the sector.  If we just
      * called sector_mcost(), we'd get the defender's cost.  The
-     * attacker's cost is higher unless he's the old-owner.  Note: if
+     * attacker's cost is higher unless it's the old-owner.  Note: if
      * there are no civilians, a victorious attacker will become the
-     * old-owner.  But he isn't now.
+     * old-owner.  But it isn't now.
      */
     sect.sct_own = attacker;
     sect.sct_mobil = 0;
@@ -1829,7 +1829,7 @@ att_fight(int combat_mode, struct combat *off, struct emp_qelem *olist,
      * (either +- 5%) to account for this randomness.  We also only
      * recalculate the odds every 8-50 casualties, not every cacsualty,
      * since a single dead guy normally wouldn't cause a commander to
-     * rethink his strategies, but 50 dead guys might.
+     * rethink their strategies, but 50 dead guys might.
      */
     odds += (roll(11) - 6) / 100.0;
     if (odds < 0.0)

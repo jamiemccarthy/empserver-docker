@@ -1386,7 +1386,7 @@ User's Guide to Empire							 30
 
 E)  Some goals that can be achieved through diplomacy:
 	1)  Getting another country to ally with you so that you can
-	    overfly his country at will without planes scrambling.
+	    overfly their country at will without planes scrambling.
 	2)  Getting two countries whom you dislike to go to war against
 	    each other. 
 	3)  Getting another country to perform an act that is beneficial
@@ -2897,8 +2897,8 @@ User's Guide to Empire							 60
 	  if s/he has not noticed they are there.  Even if s/he notices it is 
 	  a pain getting the commodities back to the warehouse.  
 	  Alternatively, you can screw up the distribution path to run through
-	  a mountain and then to his warehouse, and also set the thresholds 
-	  of the commodities quite high.  This will cause mobility in her/his 
+	  a mountain and then to their warehouse, and also set the thresholds 
+	  of the commodities quite high.  This will cause mobility in their 
 	  warehouse to be used in great quantities to get the commodities to 
 	  the recaptured sector.  Either of these ideas can get particularly 
 	  nasty.  Say you conquer a sector, and set the thresholds on food to 

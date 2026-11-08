@@ -198,7 +198,7 @@ the front (you can move four for no mobility cost).
 .s1
 Bombing enemy ships spotted by radar seems to work pretty
 well for the most part.
-If he has an aircraft carrier you can torpedo it.
+If they have an aircraft carrier you can torpedo it.
 .s1
 You never know exactly what may happen,
 sometimes you get lucky when you think it's hopeless.

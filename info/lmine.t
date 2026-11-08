@@ -13,9 +13,9 @@ mines you have put in each sector.
 .s1
 See \*Qinfo Hitchance\*U for the chance of something hitting a land mine.
 .s1
-If a defender in land combat has land-mines in the sector, he
-receives a bonus to his defense. See info \*Qattack\*U for more information.
-If the attacker has engineering units with him, the bonus is less.
+If a defender in land combat has land-mines in the sector, they
+receive a bonus to their defense. See info \*Qattack\*U for more information.
+If the attacker has engineering units with them, the bonus is less.
 .s1
 In the command syntax
 <UNIT> is the number of one of your units and <NUMBER> is
@@ -32,7 +32,7 @@ get the message "Sector x,y is now fully yours."), you have the mines located,
 and will no longer hit them.
 .s1
 If you are in a captured sector, and the original owner attacks, you will not
-get the mine bonus (as he knows where all the mines are)
+get the mine bonus (as they know where all the mines are)
 .s1
 Mines can only be removed safely by a unit with the engineering ability.
 (Other units can remove them by hitting them, but...)

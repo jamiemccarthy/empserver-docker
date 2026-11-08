@@ -60,8 +60,8 @@ have to.
 .s1
 On the other hand, destroyers are designed to hunt subs.  A
 destroyer guarding a player's coast should use sonar often,
-especially if it has other destroyers nearby to support him if
-he gets in trouble.
+especially if it has other destroyers nearby to support it if
+it gets in trouble.
 .s1
 For example:
 .EX sonar 3

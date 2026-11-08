@@ -13,7 +13,7 @@ with, and which land units (having "assault" capability) to board with.
 .s1
 In order to be able to board a ship from a ship, your ship must be as fast
 or faster than the defending ship.
-If you can't catch him, you can't board him!
+If you can't catch it, you can't board it!
 .s1
 The attacking ship will use, based upon its speed, an amount of mobility
 to overtake and board the target ship.

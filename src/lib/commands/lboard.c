@@ -130,7 +130,7 @@ c_lboard(void)
 	getland(def->lnd_uid, &land);
 	/*
 	 * What about retreat on RET_BOARDED?  Well, land units can't
-	 * move when the boarder is hostile, and retreating when he
+	 * move when the boarder is hostile, and retreating when it
 	 * isn't is not useful.
 	 */
     }

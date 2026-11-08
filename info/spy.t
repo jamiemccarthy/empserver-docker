@@ -28,7 +28,7 @@ enhances your chances of succeeding even if the spy is caught.
 .s1
 If the other country has declared itself at war with you the spy
 will be shot and the other country, (and the rest of the world,
-through the news), will be warned that you tried to spy on him...
+through the news), will be warned that you tried to spy on them...
 .s1
 If the other country is neutral towards you the spy will be deported.
 .s1

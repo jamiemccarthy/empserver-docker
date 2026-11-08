@@ -47,7 +47,7 @@ ship-of-the-line
 pre-dreadnought
 dreadnought
 battleship	While the names change, the purpose remained the same: a ship
-		that brings heavy guns close to the enemy and destroys him. It
+		that brings heavy guns close to the enemy and destroys it. It
 		also was much used for off-shore bombardment, and for ships
 		of the line, minor invasions. (A complement of 300-400 marines
 		and 600 sailors allowed a ship of the line to land up to 750

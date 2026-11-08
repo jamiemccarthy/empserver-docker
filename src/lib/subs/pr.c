@@ -35,7 +35,7 @@
 
 /*
  * Player output is fully buffered.  It can block only if the
- * receiving player is the current player and his last command doesn't
+ * receiving player is the current player and their last command doesn't
  * have the C_MOD flag.  Output to another player must not block
  * because that player could be gone when the printing thread wakes
  * up, and the code isn't prepared for that.  Output within C_MOD

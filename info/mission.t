@@ -134,7 +134,7 @@ Note that fortifying a unit does not affect it's mission status.
 DEFENDERS
 .s1
 The defender's planes will intercept planes flying missions.
-His ships/forts/units, however, will \*QNOT\*U fire at ships/forts/units
+Their ships/forts/units, however, will \*QNOT\*U fire at ships/forts/units
 firing on a mission.
 .s1
 INTERDICTION MISSIONS (ships, planes, land units)
@@ -187,7 +187,7 @@ Note also that forts will fire at enemy ships coming within
 range. You don't have to set anything for this, it
 happens automatically. (Forts firing at enemy ships naving happens before
 ships/planes/units interdicting ships, so if the enemy is using an area a
-lot, a fort will hurt him without costing you mob from planes)
+lot, a fort will hurt them without costing you mob from planes)
 .s1
 SUPPORT MISSIONS (planes only)
 .s1
@@ -270,7 +270,7 @@ so that enemy planes get intercepted several times on the way to the
 carrier, rather than just once, in the carrier's sector.
 .s1
 Another use is to provide air-cover for an ally who has temporarily
-lost his planes.
+lost their planes.
 .s1
 RESERVE MISSIONS (land units only)
 .s1

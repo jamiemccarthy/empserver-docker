@@ -10,7 +10,7 @@ it prints the acceptance status of the specified country.
 .nf
     Temekula Acceptance Status Report   Sat Jan 11 17:02:53 2014
 
-  Acceptance status        his            theirs
+  Acceptance status        its            theirs
                        tel anno loan   tel anno loan
   1) Gobu              YES  YES  YES   YES  YES  YES
   2) Spectre           YES  YES  YES   YES  YES  YES

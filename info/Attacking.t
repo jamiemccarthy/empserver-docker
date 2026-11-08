@@ -235,8 +235,8 @@ it came from at no mobility charge.
 Either 1 aggressor mil (first choice) or one land unit (second choice)
 is automatically moved into the conquered ship or sector to occupy it.
 Since this mil or unit is effectively "chasing out" the remnants of
-the defending forces, the defender will not interdict it (because he
-won't want to damage his forces with "friendly fire").
+the defending forces, the defender will not interdict it (because they
+won't want to damage their forces with "friendly fire").
 .NF
 This is what happens to the sector when you take it:
 - All delivery and distribution information is wiped.

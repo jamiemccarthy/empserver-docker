@@ -342,7 +342,7 @@ ef_flush(int type)
 /*
  * Return pointer to element @id in table @type if it exists, else NULL.
  * The table must be fully cached, i.e. flags & EFF_MEM.
- * The caller is responsible for flushing changes he makes.
+ * The caller is responsible for flushing changes it makes.
  */
 void *
 ef_ptr(int type, int id)

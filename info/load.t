@@ -58,11 +58,11 @@ load food onto ships 1, 2, 3, and 4, regardless of whether they're yours
 or they belong to a friendly trading partner.
 .s1
 If you load something onto a friendly nation's ship, it becomes
-his and he gets a telegram. If you load a unit, he gets any planes it
+theirs and they get a telegram. If you load a unit, they get any planes it
 may be carrying.
 .s1
 If you unload a plane or unit in a friendly nation's harbor, it
-becomes his. If you unload a unit, he gets any planes it may be carrying.
+becomes theirs. If you unload a unit, they get any planes it may be carrying.
 .s1
 Note that if any of <SHIPS>, <UNITS> or <PLANES> does not start with a
 number (e.g. it is of the form "s" or "*" or "#1" and not of the form

@@ -59,7 +59,7 @@ c_accept(void)
     pr("\t%s Acceptance Status Report\t", cname(as));
     prdate();
     pr("\n  Acceptance status       %s           theirs\n",
-       player->cnum == as ? "yours" : " his ");
+       player->cnum == as ? "yours" : " its ");
     pr("                       tel anno loan   tel anno loan\n");
     for (cn = 0; cn < MAXNOC; cn++) {
 	if (cn == as)
