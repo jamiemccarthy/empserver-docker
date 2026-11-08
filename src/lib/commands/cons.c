@@ -225,7 +225,7 @@ loan_accept(struct ltcomstr *ltcp)
     while (nxtitem(&nstr, &loan)) {
 	if (loan.l_status == LS_SIGNED && loan.l_lonee == lp->l_loner
 	    && (loan.l_loner == lp->l_lonee)) {
-	    pr("He already owes you money - make him repay his loan!\n");
+	    pr("They already owe you money - make them repay their loan!\n");
 	    return RET_OK;
 	}
     }
