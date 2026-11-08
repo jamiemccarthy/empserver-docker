@@ -237,7 +237,7 @@ extern void setrej(natid, natid, int, enum rej_comm);
 
 /* nation flags */
 #define NF_INFORM	bit(0)	/* Inform me of telegrams right away */
-#define NF_FLASH	bit(1)	/* Allow other players to flash me (sicko :) */
+#define NF_FLASH	bit(1)	/* Allow other players to flash me */
 #define NF_BEEP		bit(2)	/* Make beeping sounds when appropriate */
 #define NF_COASTWATCH	bit(3)	/* Turn auto-coastwatch on */
 #define NF_SONAR	bit(4)	/* Turn auto-sonar on */

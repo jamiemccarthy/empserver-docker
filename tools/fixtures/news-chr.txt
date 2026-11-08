@@ -68,7 +68,7 @@ XDUMP news-chr 1786879295
 75 "parachutists\040grab\040unoccupied\040land" "paratroopers\040break\040new\040ground" 0 8
 76 "sailors\040repelled\040by\040%s\040coast-guard" "naval\040forces\040massacred\040in\040failed\040assault\040of\040%s" 4 2
 77 "paratroopers\040destroyed\040in\040failed\040air-assault\040on\040%s" "loses\040parachutists\040in\040failed\040air-assault\040of\040%s" 4 2
-80 "is\040unable\040to\040fulfill\040its\040financial\040obligations\040to\040%s" "welches\040on\040a\040deal\040with\040%s" 0 7
+80 "is\040unable\040to\040fulfill\040its\040financial\040obligations\040to\040%s" "reneges\040on\040a\040deal\040with\040%s" 0 7
 81 "is\040repelled\040by\040%s\040while\040attempting\040to\040board\040a\040land\040unit" "forces\040prove\040inept\040at\040boarding\040%s's\040land\040unit" -3 2
 82 "mercenaries\040board\040one\040of\040%s's\040land\040units" "elite\040forces\040board\040%s\040land\040unit" -2 2
 /72

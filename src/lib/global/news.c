@@ -196,7 +196,7 @@ struct rptstr rpt[] = {
     { 78, 0, 0, { no_news, no_news } },
     { 79, 0, 0, { no_news, no_news } },
     { N_WELCH_DEAL, 0,  N_ECON,  { "is unable to fulfill its financial obligations to %s",
-				   "welches on a deal with %s" } },
+				   "reneges on a deal with %s" } },
     { N_LND_LOSE, -3, N_FRONT, { "is repelled by %s while attempting to board a land unit",
 				 "forces prove inept at boarding %s's land unit" } },
     { N_BOARD_LAND, -2, N_FRONT, { "mercenaries board one of %s's land units",

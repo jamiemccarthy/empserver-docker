@@ -290,7 +290,7 @@ pln_dropoff(struct emp_qelem *list, struct ichrstr *ip, coord tx, coord ty,
 	    return;
 	}
 	if (ip->i_uid == I_CIVIL && sect.sct_own != sect.sct_oldown) {
-	    pr("%s is occupied.  Your civilians suffer from identity crisis and die.\n",
+	    pr("%s is occupied.  Your civilians are killed.\n",
 	       xyas(tx, ty, player->cnum));
 	    return;
 	}

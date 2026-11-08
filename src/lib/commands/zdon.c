@@ -115,7 +115,7 @@ c_zdone(void)
 	    pr("You DON'T want an update, yet.\n");
     }
 
-    pr("%d of a total of %d lunatics want an update.\n", totwant, totpop);
+    pr("%d of a total of %d players want an update.\n", totwant, totpop);
 
     if (!checking && wantupd && demandupdatecheck()) {
 	pr("Here goes...\n");

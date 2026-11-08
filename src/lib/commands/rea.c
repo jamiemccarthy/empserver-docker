@@ -158,7 +158,7 @@ c_read(void)
 	    if (chance(0.25))
 		p = "Into the shredder, boss? ";
 	    else
-		p = "Can I throw away these old love letters? ";
+		p = "Delete these telegrams? ";
 	}
 	p = getstarg(player->argp[1], p, buf);
 	if (p && *p == 'y') {
