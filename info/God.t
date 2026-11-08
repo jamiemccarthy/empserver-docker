@@ -24,18 +24,18 @@ That is, if a bug bites a player, that player loses.
 It is very difficult to verify if a player
 \*Qreally did lose those 1000 gold bars\*U from that bank
 because of a bug.
-Also, whenever a player had something bad happen to him,
-he'd yell \*QBUG\*U.
+Also, whenever a player had something bad happen to them,
+they'd yell \*QBUG\*U.
 All too often, the player just did something stupid.
 .s1
 If a player ever found a \*Qgood\*U bug
 (and reported it in a timely fashion),
-I'd give him some kind of reward.
+I'd give them some kind of reward.
 The reward was generally material enough
 to encourage them to report bugs,
 but not too much so the other players complained.
 If through use of this bug the player manufactured
-\*Qtoo many\*U goodies for himself,
+\*Qtoo many\*U goodies for themselves,
 I acted to redress the balance immediately.
 .s1
 This whole case is only interesting

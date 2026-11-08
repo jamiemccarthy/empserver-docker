@@ -560,9 +560,9 @@ so tough that no one would bother you.
 It's all perception.
 .s1
 Weak countries have an added advantage: gun running!
-If a country is heading out with his fleet
+If a country is heading out with its fleet
 to attack another country and you happen to be along the way,
-you could cut a deal with him and
+you could cut a deal with it and
 you could make a deal and allow that country to attack a coastal
 sector and turn it into a harbor.
 You've now placed an obligation on that country,
