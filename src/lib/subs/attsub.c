@@ -616,7 +616,7 @@ att_approach(struct combat *off, struct combat *def)
     if (!(dam = shipdef(player->cnum, def->own, def->x, def->y)))
 	return 0;
 
-    pr("They're firing at us sir!\n");
+    pr("They're firing at us, Commander!\n");
     if (def->own) {
 	wu(0, def->own,
 	   "Your fleet at %s does %d damage to %s\n",
@@ -1909,27 +1909,27 @@ att_fight(int combat_mode, struct combat *off, struct emp_qelem *olist,
 	switch (combat_mode) {
 	case A_ATTACK:
 	    news_item = def->own ? N_WON_SECT : N_TOOK_UNOCC;
-	    pr("We have captured %s, sir!\n", prcom(0, def));
+	    pr("We have captured %s, Commander!\n", prcom(0, def));
 	    action = "taking";
 	    break;
 	case A_ASSAULT:
 	    news_item = def->own ? N_AWON_SECT : N_START_COL;
-	    pr("We have secured a beachhead at %s, sir!\n", prcom(0, def));
+	    pr("We have secured a beachhead at %s, Commander!\n", prcom(0, def));
 	    action = "assaulting and taking";
 	    break;
 	case A_PARA:
 	    news_item = def->own ? N_PWON_SECT : N_PARA_UNOCC;
-	    pr("We have captured %s, sir!\n", prcom(0, def));
+	    pr("We have captured %s, Commander!\n", prcom(0, def));
 	    action = "air-assaulting and taking";
 	    break;
 	case A_BOARD:
 	    news_item = N_BOARD_SHIP;
-	    pr("We have boarded %s, sir!\n", prcom(0, def));
+	    pr("We have boarded %s, Commander!\n", prcom(0, def));
 	    action = "boarding";
 	    break;
 	case A_LBOARD:
 	    news_item = N_BOARD_LAND;
-	    pr("We have boarded %s, sir!\n", prcom(0, def));
+	    pr("We have boarded %s, Commander!\n", prcom(0, def));
 	    action = "boarding";
 	    break;
 	default:
@@ -2225,7 +2225,7 @@ take_def(int combat_mode, struct emp_qelem *list, struct combat *off,
 	takeover(&sect, player->cnum);
 	if (sect.sct_type == SCT_CAPIT || sect.sct_type == SCT_MOUNT)
 	    caploss(&sect, def->own,
-		    "* We have captured %s's capital, sir! *\n");
+		    "* We have captured %s's capital, Commander! *\n");
 	putsect(&sect);
     } else if (def->type == EF_SHIP) {
 	getship(def->shp_uid, &ship);
