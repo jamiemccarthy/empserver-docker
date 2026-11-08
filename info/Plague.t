@@ -31,7 +31,6 @@ This stage lasts 32 to 63 time units,
 .ti -3
 Stage II -- The infectious phase in which the symptoms first appear --
 orange blotches on the face and hands,
-sometimes accompanied by grey stripes on the genitalia,
 itching of the liver and spleen,
 an uncontrollable fear of ripe tomatoes, etc.
 During this phase the plague is extremely communicable;

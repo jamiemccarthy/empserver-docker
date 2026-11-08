@@ -23,22 +23,22 @@ For example:
 Enter telegram for multiple recipients
 undo last line with ~u, print with ~p, abort with ~q, end with .
  1024 left:
- 1023 left: B.F.D. Pouncetrifle
- 1003 left: Groonland Embassy
-  984 left:
-  983 left: Dear Ambassador Pouncetrifle,
-  953 left:
-  952 left: Just a little note to express the friendly wishes that all of us
-  887 left: in Curmudgeon feel toward you backward savages in Groonland.  As
-  822 left: to the matter of the treaty you've proposed please remember that
-  757 left: if we wished we could TRASH your capital.
-  715 left:
-  714 left:                         As always I remain,
-  688 left:                         Your humble and obedient servant, etc, etc
-  638 left:                         E. D. Amen Dada
-  616 left:                         Under Asst. West Coast Promo.
-  580 left:                         the Sovereign State of Curmudgeon
-  540 left: .
+ 1023 left: Quillon Pennywhistle
+ 1002 left: Embassy of Marmalada
+  981 left:
+  980 left: Dear Ambassador Pennywhistle,
+  950 left:
+  949 left: Just a little note to express the friendly wishes that all of us
+  884 left: in Curmudgeon feel toward you bastards in Marmalada.  As
+  827 left: to the matter of the treaty you've proposed please remember that
+  762 left: if we wished we could TRASH your capital.
+  720 left:
+  719 left:                         As always I remain,
+  675 left:                         Your humble and obedient servant, etc, etc
+  608 left:                         Bartholomew Fizzlewick
+  561 left:                         Deputy Undersecretary for Paperclips
+  500 left:                         the Sovereign State of Curmudgeon
+  442 left: .
 .FI
 .s1
 Note that others can reject your telegrams, using \*Qreject\*U.

@@ -295,7 +295,7 @@ Oh well, that's what you deserve...
 Just kidding.
 Most of the people you will play with are rather trustworthy souls.
 At least they are until it becomes burdensome to them.
-A good relationship (as all those sex manuals will tell you)
+A good relationship
 is based on trust and respect for the other person.
 What does this mean to you?
 Build enough military to be a pain to invade.
@@ -334,7 +334,6 @@ Try to get a hold of nukes to devastate them.
 Form a cartel with other small nations
 and try to run over a big country.
 As in real life, the possibilities are endless!
-Look at the Middle East, they're having fun, right?
 .s1
 This is just a game, and from this point on,
 you don't have to worry about watching over your nation too closely.

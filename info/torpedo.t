@@ -1,5 +1,5 @@
 .TH Command TORPEDO
-.NA torpedo "Slip a torpedo to some poor sucker (from a sub or ship)"
+.NA torpedo "Fire a torpedo at another ship (from a sub or ship)"
 .LV Basic
 .SY "torpedo <submarine-SHIPS> <target-SHIP>"
 The torpedo command is used to shoot other naval vessels

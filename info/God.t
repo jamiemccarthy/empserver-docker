@@ -47,9 +47,8 @@ Unskilled players.
 It's tough watching your friends lose in an Empire game.
 Helping \*Qjust a little\*U by giving information,
 or by giving a teensy bit of assistance is BAD.
-Empire is NOT a game of socialist care for the needy;
-it's more like survival of the fittest.
-Players should sink or swim on their own.
+Empire is not a game where the deity helps struggling players;
+players should sink or swim on their own.
 If you help a novice, you're deliberately hurting their opponent.
 Some players will lose,
 and as Deity you'll have to stand by and watch this happen.

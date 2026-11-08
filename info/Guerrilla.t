@@ -2,72 +2,56 @@
 .NA Guerrilla "Guerrilla warfare"
 .LV Expert
 .s1
-Guerrillas are created in several ways;
-when a sector is captured by an enemy,
-or when civilians riot for one reason or another
-(starvation, no happiness, etc).
+Guerrillas (shown as \*Qche\*U in reports) are people in a sector
+who have taken up arms against the country that holds it.
+They appear in two ways.
+When a sector is captured, some of its civilians may become guerrillas
+fighting the new owner; the less loyal the sector was, the more of them.
+And when the people of a sector are unhappy
+and there are too few military there,
+civilians and unfree workers may rise up at an update.
 .s1
-Guerrillas have a generally detrimental effect
-on the well-being of your country.
-Depending on the amount of military in the sector they \*Qinfest\*U,
-they will either attack the military there
-(but only if they have a good chance of winning),
-blow up things (lowering sector efficiency),
-or, if they are too badly outnumbered,
-they will try and move to a different sector.
+At each update, what guerrillas do depends on how many military
+are in their sector.
+Land units count toward the military,
+and units with the \*Qsecurity\*U ability count four times over.
 .s1
-If there are no military in the \*Qinfested\*U sector
-at the end of the update to break up guerrilla recruitment drives,
-your civilians' loyalty will suffer.
-If the sector is only occupied --
-not completely owned by you, that is --
-then it will revert back to the old owner,
-renouncing the conqueror and returning to their old allegiance.
-The guerrillas will then move on to \*Qconvert\*U more sectors.
-Particular guerrilla bands will fight to the death,
-or until you dissolve in disgust.
+With no military in the sector,
+guerrillas spread subversion, making the sector less loyal,
+and recruit more people to their cause.
 .s1
-Guerrillas will attempt to \*Qrecruit\*U new followers
-from semi-loyal sectors and from the unfree worker population.
-Loyal civilians will resist these recruiting drives,
-but unfree workers will always flock to the banner
-of the guerrilla warrior.
+If they outnumber the military, they fight them.
+If they win and the sector is disloyal enough,
+the sector is lost:
+a captured sector goes back to its old owner,
+and a sector of your own breaks away from you.
 .s1
-The renowned guerrilla fighter Colonel (later Captain) Batguano
-gave a talk to the special forces, which was later made into an
-Armed Forces Technical Manual.
-In it he states,
+If they are outnumbered by less than five to one,
+they turn to sabotage: work in the sector is disrupted,
+the sector is damaged, and they keep recruiting.
 .s1
-.in +0.8i
-.ll -0.8i
-The first thing you learn is that the che are hardier than cockroaches,
-eat like birds, and are simply invulnerable to gunfire and napalm.
-They hide in the sewers.
-There are two ways to handle the guerrilla problem;
-one way requires high yield fusion weapons,
-and then they only die when everything else in the sector is destroyed.
-Unfortunately, collateral damage to civilian assets renders this
-strategy negatory ... [Col. Batguano then launches into
-a tirade against the \*Qwimpy-assed liberals\*U which interfere with the
-proper guerrilla suppression techniques] ...
-Almost every fully-populated area we moved into
-had a few dozen of the little monsters,
-and troop levels of 50-100 per sector were found to adequately
-pacify the region.
-Of course, depopulating the area prior to takeover often had a salutary
-effect on the number of che we later found...
-.ll
-.in
+If they are outnumbered by five to one or more,
+they try to slip away to a neighboring sector of yours
+that has fewer military.
 .s1
-You will be notified of the varying civil disturbances
-by \*Qproduction\*U telegrams showing a body count of guerrillas killed,
-a sector being subverted by revolutionary propaganda,
-or a sector lost to guerrilla activities!
+Wherever military and guerrillas share a sector without a battle,
+there is a chance that some of the military find the guerrillas
+and fight them.
+The more the military outnumber them, the better that chance.
 .s1
-Land units present in a sector help to fight them, fighting without
-any multiplier, either offensive or defensive and without any
-fortification bonus, except units with the
-\*Qsecurity\*U ability fight with a multiplier of four.  They
-will also kill some che before anything else is
-done (commando raids).
-.SA "Populace, Occupation, Updates"
+Guerrillas recruit from the unfree workers in their sector,
+and from its civilians when the sector is occupied
+or its civilians are very disloyal.
+.s1
+Before anything else at an update, each security land unit
+in the sector raids the guerrillas and kills some of them.
+You can also attack them directly with the \*Qanti\*U command.
+Guerrillas are gone once they are all killed,
+or once the country they are fighting no longer exists,
+when they go back to being civilians.
+.s1
+You will hear about guerrilla activity in \*Qproduction\*U telegrams:
+subversion reported in a sector, production disrupted,
+a body count of troops and guerrillas killed,
+or a sector lost to them.
+.SA "anti, Populace, Occupation, Updates"

@@ -30,7 +30,7 @@ some cases more than one.
 .EX info all
 This will list all info pages.  Warning: this list is long!
 .s1
-As of this writing, some clients shanghai the help command to provide
+As of this writing, some clients take over the help command to provide
 help on their own command line extensions, but fail to integrate
 server help.  If the help command doesn't work for you, try the info
 command instead.

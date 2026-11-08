@@ -8,7 +8,7 @@ check relations and can cause damage to enemies and allies.
 Sabotage can only be done by spy units.  The spy must have
 a shell to make an attempt.
 .s1
-Terrorizing your neighbors is dangerous work.  Spies can be
+Sabotage is dangerous work.  Spies can be
 caught or die during a sabotage attempt.
 .s1
 Sabotage can be more effective against enemy warehouses filled

@@ -574,7 +574,7 @@ Problem	  This one is potentially nasty.  It means that another process is
 	  2: A process of yours that got accidentally hung.
 	  3: The network hung your remote process even though your local
 	     process is now terminated. 
-Solution  (1) Go kick your friend in the head :-)
+Solution  (1) Ask your friend to log out :-)
 	  (2) Kill your process 'nicely'.  To find the process execute a 
 	  'ps -x' command and find the appropriate process number:
 	  autarch{client}ps -x
@@ -2079,10 +2079,10 @@ User's Guide to Empire							 44
 	There is a command called "report" which will list other countries,
 	their status, and their levels of tech, research, and education 
 	relative to you.  If your tech is significantly higher than 
-	say a country called 'Canada' then report will indicate that
-	Canada's technological level is 'backward' relative to you. 
-	If Canada's technological level is significantly higher, than
-	report will indicate 'advanced', meaning Canada is advanced
+	say a country called 'Freedonia' then report will indicate that
+	Freedonia's technological level is 'backward' relative to you. 
+	If Freedonia's technological level is significantly higher, than
+	report will indicate 'advanced', meaning Freedonia is advanced
 	relative to you.  If its roughly the same, 'similar' will be
 	shown.  There are two other possibilities, 'primitive' and 
 	'superior' which are used for extreme differences in levels.

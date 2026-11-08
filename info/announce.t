@@ -20,8 +20,8 @@ undo last line with ~u, print with ~p, abort with ~q, end with .
  927 left: 
  926 left: HELP!  Curmudgeon just TRASHED our capital!  We had even proposed
  860 left: a very fair treaty, but they did it anyway!  People of the World,
- 794 left: UNITE!  Overthrow the slave masters of Curmudgeon!
- 744 left: .
+ 794 left: UNITE!  Overthrow the tyrants of Curmudgeon!
+ 749 left: .
 JoeBlowLand is rejecting your announcements
 ZappaLand is rejecting your announcements
 .FI
