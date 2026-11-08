@@ -792,7 +792,7 @@
     Play#0 output Play#0 1     gives the cold shoulder to %s and declares neutral relations
     Play#0 output Play#0 1 65 Foreign Affairs         3
     Play#0 output Play#0 1     upgrades relations with %s to hostile
-    Play#0 output Play#0 1     forgives %s of past war crimes but remains hostile
+    Play#0 output Play#0 1     eases its stance toward %s but remains hostile
     Play#0 output Play#0 1 66 Foreign Affairs         3
     Play#0 output Play#0 1     downgrades relations with %s to hostile
     Play#0 output Play#0 1     is suspicious that %s has hostile intentions
@@ -2058,7 +2058,7 @@
     Play#0 output Play#0 1 62 "downgrades\\040relations\\040with\\040%s\\040to\\040friendly" "cools\\040relations\\040with\\040%s\\040to\\040friendly" 0 1
     Play#0 output Play#0 1 63 "upgrades\\040relations\\040with\\040%s\\040to\\040neutral" "Foreign\\040Ministry\\040declares\\040\\042%s\\040is\\040A-OK.\\042" 2 1
     Play#0 output Play#0 1 64 "downgrades\\040relations\\040with\\040%s\\040to\\040neutral" "gives\\040the\\040cold\\040shoulder\\040to\\040%s\\040and\\040declares\\040neutral\\040relations" 0 1
-    Play#0 output Play#0 1 65 "upgrades\\040relations\\040with\\040%s\\040to\\040hostile" "forgives\\040%s\\040of\\040past\\040war\\040crimes\\040but\\040remains\\040hostile" 3 1
+    Play#0 output Play#0 1 65 "upgrades\\040relations\\040with\\040%s\\040to\\040hostile" "eases\\040its\\040stance\\040toward\\040%s\\040but\\040remains\\040hostile" 3 1
     Play#0 output Play#0 1 66 "downgrades\\040relations\\040with\\040%s\\040to\\040hostile" "is\\040suspicious\\040that\\040%s\\040has\\040hostile\\040intentions" 3 1
     Play#0 output Play#0 1 67 "sector\\040is\\040struck\\040by\\040a\\040sub-launched\\040missile" "sector\\040devastated\\040by\\040missile" 0 5
     Play#0 output Play#0 1 68 "ship\\040is\\040hit\\040by\\040a\\040sub-launched\\040missile" "ship\\040damaged\\040by\\040marine\\040missile" 0 5
@@ -2709,7 +2709,7 @@
     Play#1 output Play#1 1 62 "downgrades\\040relations\\040with\\040%s\\040to\\040friendly" "cools\\040relations\\040with\\040%s\\040to\\040friendly" 0 1
     Play#1 output Play#1 1 63 "upgrades\\040relations\\040with\\040%s\\040to\\040neutral" "Foreign\\040Ministry\\040declares\\040\\042%s\\040is\\040A-OK.\\042" 2 1
     Play#1 output Play#1 1 64 "downgrades\\040relations\\040with\\040%s\\040to\\040neutral" "gives\\040the\\040cold\\040shoulder\\040to\\040%s\\040and\\040declares\\040neutral\\040relations" 0 1
-    Play#1 output Play#1 1 65 "upgrades\\040relations\\040with\\040%s\\040to\\040hostile" "forgives\\040%s\\040of\\040past\\040war\\040crimes\\040but\\040remains\\040hostile" 3 1
+    Play#1 output Play#1 1 65 "upgrades\\040relations\\040with\\040%s\\040to\\040hostile" "eases\\040its\\040stance\\040toward\\040%s\\040but\\040remains\\040hostile" 3 1
     Play#1 output Play#1 1 66 "downgrades\\040relations\\040with\\040%s\\040to\\040hostile" "is\\040suspicious\\040that\\040%s\\040has\\040hostile\\040intentions" 3 1
     Play#1 output Play#1 1 67 "sector\\040is\\040struck\\040by\\040a\\040sub-launched\\040missile" "sector\\040devastated\\040by\\040missile" 0 5
     Play#1 output Play#1 1 68 "ship\\040is\\040hit\\040by\\040a\\040sub-launched\\040missile" "ship\\040damaged\\040by\\040marine\\040missile" 0 5

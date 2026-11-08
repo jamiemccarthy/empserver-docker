@@ -168,7 +168,7 @@ struct rptstr rpt[] = {
     { N_DOWN_NEUTRAL, 0,  N_FOR,   { "downgrades relations with %s to neutral",
 				     "gives the cold shoulder to %s and declares neutral relations" } },
     { N_UP_HOSTILE, 3,  N_FOR,   { "upgrades relations with %s to hostile",
-				   "forgives %s of past war crimes but remains hostile" } },
+				   "eases its stance toward %s but remains hostile" } },
     { N_DOWN_HOSTILE, 3,  N_FOR,   { "downgrades relations with %s to hostile",
 				     "is suspicious that %s has hostile intentions" } },
     { N_SCT_SMISS, 0,  N_MISS,  { "sector is struck by a sub-launched missile",

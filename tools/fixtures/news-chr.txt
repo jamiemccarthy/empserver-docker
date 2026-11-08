@@ -55,7 +55,7 @@ XDUMP news-chr 1786879295
 62 "downgrades\040relations\040with\040%s\040to\040friendly" "cools\040relations\040with\040%s\040to\040friendly" 0 1
 63 "upgrades\040relations\040with\040%s\040to\040neutral" "Foreign\040Ministry\040declares\040\042%s\040is\040A-OK.\042" 2 1
 64 "downgrades\040relations\040with\040%s\040to\040neutral" "gives\040the\040cold\040shoulder\040to\040%s\040and\040declares\040neutral\040relations" 0 1
-65 "upgrades\040relations\040with\040%s\040to\040hostile" "forgives\040%s\040of\040past\040war\040crimes\040but\040remains\040hostile" 3 1
+65 "upgrades\040relations\040with\040%s\040to\040hostile" "eases\040its\040stance\040toward\040%s\040but\040remains\040hostile" 3 1
 66 "downgrades\040relations\040with\040%s\040to\040hostile" "is\040suspicious\040that\040%s\040has\040hostile\040intentions" 3 1
 67 "sector\040is\040struck\040by\040a\040sub-launched\040missile" "sector\040devastated\040by\040missile" 0 5
 68 "ship\040is\040hit\040by\040a\040sub-launched\040missile" "ship\040damaged\040by\040marine\040missile" 0 5
