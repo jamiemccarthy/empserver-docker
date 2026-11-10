@@ -68,11 +68,7 @@ before the end of the series in the spring
 leading to the mysterious \*QNeilson Rating\*U]
 we would have to turn to other disciplines for help.
 It was only by the merest lucky coincidence
-that as I drove home one evening ...
-[here Dr. Welby relates an amusing anecdote
-about a Brownie Scout and the director of a film
-entitled \*QClose Encounters of the Third Grade\*U] ...
-leading us to the following amazing formulation
+that we arrived at the following amazing formulation
 of the relationship between medical research,
 technology, population, standard of living and the Empire Plague:
 .ll
