@@ -110,7 +110,7 @@ retreat paths, sweep planes, budget.  Tom thanks the following people
 for helping him with ideas and play-testing:
 
 			Jorge Diaz (Ansalon)
-			Tom Tedrick (Afrika Korps)
+			Tom Tedrick
 			Keith Graham (DreamLands),
 			Dave Nye (Evil_Empire)
 			Sasha Mikheev (Dolgopa)

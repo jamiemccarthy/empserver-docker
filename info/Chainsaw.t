@@ -416,7 +416,7 @@ not detonate. Nukes striking water sectors affect only their impact sector.
 
 .s1
 Thanks go to all the people who've helped me with ideas and playtesting:
-Jorge Diaz (Ansalon), Tom Tedrick (Afrika Korps), Keith Graham (DreamLands),
+Jorge Diaz (Ansalon), Tom Tedrick, Keith Graham (DreamLands),
 Dave Nye (Evil_Empire), Sasha Mikheev (Dolgopa), Baldric, Elsinore, Brett Reid
 (Resvon), Kazzadur \eystein Tvedten (Flipper's evil twin), Tharkadia, Yikes, and
 many more I'm forgetting. The good things are mostly ideas contributed by these
