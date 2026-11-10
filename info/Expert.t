@@ -216,4 +216,4 @@ bottleneck which interferes with various things, and
 the decisive advantage that gives victory to the attacker.
 .s1
 .s1
-.SA "Overview, Novice, Hints, Introduction"
+.SA "Overview, Hints, Introduction"

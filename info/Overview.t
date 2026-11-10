@@ -234,4 +234,4 @@ The game is still maintained by the Wolfpack team.  Markus Armbruster
 serves as technical lead since 2004.
 .in
 .s1
-.SA "Novice, Expert, Introduction"
+.SA "Expert, Introduction"
