@@ -1754,8 +1754,8 @@ Changes to Empire 4.3.11 - Tue Jan  1 18:57:38 UTC 2008
      EOF character (normally ^D) at an argument prompt, the session
      hangs.  Use the interrupt character (normally ^C) to get out.
  * The client now supports options -h and -v.
- * The client no longer zaps its command line in a weak attempt at
-   protecting users who specify passwords on the command
+ * The client no longer zaps its command line in a lame attempt at
+   protecting users who foolishly specify passwords on the command
    line.  Zapping annoys system administrators and creates a false
    sense of security.
  * Journal entries are now flushed to disk right away when the server
@@ -2097,7 +2097,7 @@ Changes to Empire 4.3.6 - Tue Jun 20 18:46:18 UTC 2006
    get the same effect.
  * Many more selectors can now be compared with names, not just
    numbers.  This includes nations, e.g. census ?old=Mirkwood.  Does
-   not fully work for unusual names like &&&.
+   not fully work for queer names like &&&.
  * Let land units on missions support, just like ships.
  * Don't let units loaded on a train react.
  * Change update sequence to repair ships, planes and land units after

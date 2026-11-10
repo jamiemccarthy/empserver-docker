@@ -538,7 +538,7 @@ made before support is calculated, and before the enemy reacting
 units have reacted, so it will not be particularly accurate.  However, if
 by the time you've finished answering all the attack prompts something has
 happened which has made your odds much worse than you expected (e.g. your
-cavalry got shelled or your enemy beefed up their mil), then this will give
+cavalry got shelled or your enemy beefed up his mil), then this will give
 you a chance to abort the attack.
 .L -
 Immediately after a battle is won (i.e. before any move-in sub-prompts
